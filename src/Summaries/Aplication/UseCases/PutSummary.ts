@@ -10,7 +10,7 @@ export class PutSummaryUseCase{
     async execute(title:string,desc:string,pdf:string,id:string): Promise<void>{
             const summary= await this.SummaryRepository.findById(id)
             if(summary){
-                await this.SummaryRepository.put(summary,title,desc,pdf)
+                await this.SummaryRepository.put(summary,id)
             }
             
         }

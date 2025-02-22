@@ -1,0 +1,64 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp/
+.pnp.js
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+*.log.*
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+lerna-debug.log
+
+# Build
+dist/
+build/
+out/
+.tmp/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts
+*.d.ts.map
+
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# MacOS/Linux
+.DS_Store
+*.lock
+*.pid
+*.seed
+*.pid.lock
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Coverage
+coverage/
+.nyc_output/
+lcov-report/
+
+# Misc
+*.bak
+*.orig
