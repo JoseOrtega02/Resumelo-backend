@@ -1,0 +1,78 @@
+
+import{  Request, Response } from "express";
+import { FindAllSummariesUseCase } from "../../Aplication/UseCases/FindAllSummary"
+import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo"
+import { FindByIdUseCase } from "../../Aplication/UseCases/FindByIdSummary";
+import { Summary } from "../../Domain/Entities/Summary";
+import { CreateSummaryUseCase } from "../../Aplication/UseCases/CreateSumary";
+import { PutSummaryUseCase } from "../../Aplication/UseCases/PutSummary";
+import { DeleteSummaryUseCase } from "../../Aplication/UseCases/DeleteSummary";
+
+interface ISummaryController {
+    getAll(req: Request, res: Response): Promise<void>;
+    getById(req: Request, res: Response): Promise<void>;
+    create(req: Request, res: Response): Promise<void>;
+    edit(req: Request, res: Response): Promise<void>;
+    delete(req: Request, res: Response): Promise<void>;
+}
+
+export class SummaryController implements ISummaryController {
+    private repositoryInstance: SummaryRepo;
+    
+    constructor(repo: SummaryRepo) {
+        this.repositoryInstance = repo;
+    }
+
+    async getAll(req: Request, res: Response): Promise<void> {
+        try {
+            const useCase = new FindAllSummariesUseCase(this.repositoryInstance);
+            const summaries = await useCase.exec(); // Added `await`
+            res.json(summaries); // Use `res.json()` for JSON responses
+        } catch (error) {
+            res.status(500).json({ error: "Failed to retrieve summaries" });
+        }
+    }
+
+    async getById(req: Request, res: Response): Promise<void> {
+        try {
+            const useCase = new FindByIdUseCase(this.repositoryInstance);
+            const summary = await useCase.exec(req.body.id);
+            res.json(summary);
+        } catch (error) {
+            res.status(404).json({ error: "Summary not found" });
+        }
+    }
+
+    async create(req: Request, res: Response): Promise<void> {
+        const useCase = new CreateSummaryUseCase(this.repositoryInstance);
+        const { title, desc, pdf } = req.body;
+        try {
+            await useCase.execute(title, desc, pdf);
+            res.status(201).json({ message: "Summary created successfully" });
+        } catch (error) {
+            res.status(400).json({ error: "Failed to create summary" });
+        }
+    }
+
+    async edit(req: Request, res: Response): Promise<void> {
+        const useCase = new PutSummaryUseCase(this.repositoryInstance);
+        const { id, title, desc, pdf } = req.body;
+        try {
+            await useCase.execute(title, desc, pdf, id);
+            res.json({ message: "Summary edited successfully" });
+        } catch (error) {
+            res.status(400).json({ error: "Failed to edit summary" });
+        }
+    }
+
+    async delete(req: Request, res: Response): Promise<void> {
+        const useCase = new DeleteSummaryUseCase(this.repositoryInstance);
+        const { id } = req.body;
+        try {
+            await useCase.exec(id);
+            res.json({ message: "Summary deleted successfully" });
+        } catch (error) {
+            res.status(400).json({ error: "Failed to delete summary" });
+        }
+    }
+}
