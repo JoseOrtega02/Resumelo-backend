@@ -49,4 +49,12 @@ export class Summary implements ISummary{
             this.liked = liked;
         }
     }
+
+    equals(other: Summary) {
+        return (
+          this.title === other.title &&
+          this.desc === other.desc &&
+          this.pdf === other.pdf
+        );
+      }
 }

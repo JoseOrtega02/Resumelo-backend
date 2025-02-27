@@ -7,11 +7,17 @@ export class PutSummaryUseCase{
             this.SummaryRepository = SummaryRepository
         }
     
-    async execute(title:string,desc:string,pdf:string,id:string): Promise<void>{
+    async execute(title:string,desc:string,pdf:string,id:string): Promise<Summary | null>{
             const summary= await this.SummaryRepository.findById(id)
+            let newSummary = null
             if(summary){
-                await this.SummaryRepository.put(summary,id)
+                summary.setTitle(title)
+                summary.setDesc(desc)
+                summary.setPdf(pdf)
+                newSummary =  await this.SummaryRepository.put(summary,id)
+                
             }
+            return newSummary
             
         }
 }

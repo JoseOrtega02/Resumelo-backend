@@ -7,9 +7,15 @@ export class CreateSummaryUseCase{
         this.SummaryRepository = SummaryRepository
     }
 
-    async execute(title:string,desc:string,pdf:string): Promise<void>{
-        const summary= new Summary(title,desc,pdf)
+    async execute(title:string,desc:string,pdf:string): Promise<string>{
+        try {
+             const summary= new Summary(title,desc,pdf)
 
-        await this.SummaryRepository.create(summary)
+             this.SummaryRepository.create(summary)
+             return "Summary created Successfully"
+        } catch (error) {
+            return "Error in the creation of summary : "+error
+        }
+       
     }
 }
