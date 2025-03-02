@@ -6,7 +6,12 @@ export class FindAllSummariesUseCase{
             this.SummaryRepository = SummaryRepository
         }
     async exec(){
-        const summaries= await this.SummaryRepository.findAll()
+        try {
+            const summaries= await this.SummaryRepository.findAll()
         return summaries
+        } catch (error) {
+            throw new Error("Failed to retrieve summaries");
+        }
+        
     }
 }

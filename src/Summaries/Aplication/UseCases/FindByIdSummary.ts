@@ -6,7 +6,12 @@ export class FindByIdUseCase{
             this.SummaryRepository = SummaryRepository
         }
     async exec(id:string){
-        const summary = await this.SummaryRepository.findById(id)
-        return summary
+        try {
+            const summary = await this.SummaryRepository.findById(id)
+            return summary
+        } catch (error) {
+            throw new Error("Failed to retrieve summaries");
+        }
+        
     }
 }

@@ -1,18 +1,25 @@
+import { randomUUID } from "crypto";
 import { ISummary } from "./ISummary";
 
 export class Summary implements ISummary{
+    private id: string;
     private title: string;
     private desc: string;
     private pdf: string;
     likes: number;
     liked: boolean;
 
-    constructor(title: string, desc: string, pdf: string, likes: number = 0, liked: boolean = false) {
+    constructor(title: string, desc: string, pdf: string, likes: number = 0, liked: boolean = false,id?: string) {
+        this.id = id || randomUUID();
         this.title = title;
         this.desc = desc;
         this.pdf = pdf;
         this.likes = likes;
         this.liked = liked;
+    }
+
+    getId():string{
+        return this.id
     }
 
     getTitle(): string {
@@ -50,11 +57,14 @@ export class Summary implements ISummary{
         }
     }
 
-    equals(other: Summary) {
+    equals(other: Summary): boolean {
         return (
-          this.title === other.title &&
-          this.desc === other.desc &&
-          this.pdf === other.pdf
+            this.title === other.title &&
+            this.desc === other.desc &&
+            this.pdf === other.pdf &&
+            this.likes === other.likes &&
+            this.liked === other.liked &&
+            this.id === other.id
         );
-      }
+    }
 }

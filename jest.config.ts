@@ -3,6 +3,7 @@ import type { Config } from "jest";
 const config: Config = {
   preset: "ts-jest",
   testEnvironment: "node",
+  verbose: true,
 
   // Transforma archivos TypeScript usando ts-jest
   transform: {

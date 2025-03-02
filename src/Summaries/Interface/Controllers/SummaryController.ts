@@ -25,9 +25,10 @@ export class SummaryController implements ISummaryController {
 
     async getAll(req: Request, res: Response): Promise<void> {
         try {
+            
             const useCase = new FindAllSummariesUseCase(this.repositoryInstance);
             const summaries = await useCase.exec(); // Added `await`
-            res.json(summaries); // Use `res.json()` for JSON responses
+            res.status(200).json(summaries); // Use `res.json()` for JSON responses
         } catch (error) {
             res.status(500).json({ error: "Failed to retrieve summaries" });
         }
@@ -36,7 +37,7 @@ export class SummaryController implements ISummaryController {
     async getById(req: Request, res: Response): Promise<void> {
         try {
             const useCase = new FindByIdUseCase(this.repositoryInstance);
-            const summary = await useCase.exec(req.body.id);
+            const summary = await useCase.exec(req.params.id);
             res.json(summary);
         } catch (error) {
             res.status(404).json({ error: "Summary not found" });
@@ -47,10 +48,10 @@ export class SummaryController implements ISummaryController {
         const useCase = new CreateSummaryUseCase(this.repositoryInstance);
         const { title, desc, pdf } = req.body;
         try {
-            await useCase.execute(title, desc, pdf);
-            res.status(201).json({ message: "Summary created successfully" });
+            const message= await useCase.execute(title, desc, pdf);
+            res.status(201).json(message);
         } catch (error) {
-            res.status(400).json({ error: "Failed to create summary" });
+            res.status(500).json({ error: error });
         }
     }
 

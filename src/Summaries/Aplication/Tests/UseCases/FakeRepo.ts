@@ -11,7 +11,7 @@ export class FakeSummaryRepo implements SummaryRepo {
 
     async create(summary: ISummary): Promise<void> {
         const id =crypto.randomUUID()
-       const newSummary:Summary =new Summary(summary.getTitle(),summary.getDesc(),summary.getUrl(),0,false)
+       const newSummary:Summary =new Summary(summary.getTitle(),summary.getDesc(),summary.getUrl(),0,false,id)
         this.summaries.set(id, newSummary);
     }
 

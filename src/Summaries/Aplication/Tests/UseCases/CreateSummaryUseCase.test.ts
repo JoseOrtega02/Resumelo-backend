@@ -8,6 +8,6 @@ test("Create a summary use case-Unit Testing",async ()=>{
 
     const res = await useCase.execute("test Summary","its just a test case","test.pdf")
 
-    expect(res).toBe("Summary created Successfully")
+    expect(res).toBe("Summary created successfully")
 
 })

@@ -3,6 +3,7 @@ export interface  ISummary{
     getDesc(): string;
     getUrl(): string;
     getLikesCount(): number;
+    getId():string;
     
     setTitle(title: string): void;
     setDesc(desc: string): void;

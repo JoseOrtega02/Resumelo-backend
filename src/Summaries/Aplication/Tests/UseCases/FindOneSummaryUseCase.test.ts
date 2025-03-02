@@ -9,6 +9,9 @@ test("Find One Summary by id-Unit Test",async ()=>{
      const res = await useCase.exec(id)
     
      expect(res).toEqual({
+        id:expect.stringMatching(
+            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+          ),
         title: "Default Summary",
         desc: "This is a default summary.",
         liked: false,

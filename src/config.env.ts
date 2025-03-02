@@ -1,7 +1,10 @@
-process.loadEnvFile()
+import dotenv from 'dotenv';
 
-const  SYNC_URL_DB = process.env.SYNC_URL_DB
-const AUTH_TOKEN_DB = process.env.AUTH_TOKEN_DB
+// Check if running tests and load the corresponding .env file
+const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+dotenv.config({ path: envFile });
 
-export {SYNC_URL_DB,AUTH_TOKEN_DB}
+const SYNC_URL_DB = process.env.SYNC_URL_DB;
+const AUTH_TOKEN_DB = process.env.AUTH_TOKEN_DB;
 
+export { SYNC_URL_DB, AUTH_TOKEN_DB };
