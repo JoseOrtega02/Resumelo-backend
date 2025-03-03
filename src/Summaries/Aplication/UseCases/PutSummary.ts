@@ -8,16 +8,22 @@ export class PutSummaryUseCase{
         }
     
     async execute(title:string,desc:string,pdf:string,id:string): Promise<Summary | null>{
-            const summary= await this.SummaryRepository.findById(id)
+        try {
+             const summary= await this.SummaryRepository.findById(id)
+             console.log(summary)
             let newSummary = null
             if(summary){
                 summary.setTitle(title)
                 summary.setDesc(desc)
                 summary.setPdf(pdf)
                 newSummary =  await this.SummaryRepository.put(summary,id)
-                
+                console.log(newSummary)
             }
             return newSummary
+        } catch (error) {
+            throw new Error("Something gone wrong"+error)
+        }
+           
             
         }
 }

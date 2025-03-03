@@ -27,26 +27,26 @@ describe("Integration test for Summary API",()=>{
     expect(res.status).toBe(200);
 
     const expected = {
-        desc: "This is a default summary.",
-        id: "77fee0ce-4a87-40cd-b58a-b15019489ce0",
-        liked: 0,
-        likes: 0,
-        pdf: "blablaba.pdf",
-        title: "Default Summary",
+        desc: "Another summary description.",
+        id: "b6d22e48-1bb4-4d9c-92a4-8b920e67f8b5",
+        liked: 1,
+        likes: 5,
+        pdf: "another.pdf",
+        title: "Another Summary",
       };
       
       expect(res.body).toContainEqual(expected);
     })
 
     test("GET /Summary/:id should return an specific summary",async () =>{
-        const res = await request(app).get("/summary/77fee0ce-4a87-40cd-b58a-b15019489ce0").expect(200)
+        const res = await request(app).get("/summary/b6d22e48-1bb4-4d9c-92a4-8b920e67f8b5").expect(200)
         expect(res.body).toEqual({
-            id: '77fee0ce-4a87-40cd-b58a-b15019489ce0',
-            title: 'Default Summary',
-            desc: 'This is a default summary.',
-            pdf: 'blablaba.pdf',
-            likes: 0,
-            liked: 0
+            id: 'b6d22e48-1bb4-4d9c-92a4-8b920e67f8b5',
+            title: 'Another Summary',
+            desc: 'Another summary description.',
+            pdf: 'another.pdf',
+            likes: 5,
+            liked: 1
           });
     })
     
@@ -68,18 +68,18 @@ describe("Integration test for Summary API",()=>{
         );
     })
     
-    // test("PUT /summary/id should return a successfull message and edit a summary",async ()=>{
-    //     const res = (await request(app).put("/summary/0")).body({
-    //         title:"edited summary",
-    //         desc:"edited a summary",
-    //         pdf:"edited.pdf"
-    //     }).expect(201)
-    //     expect(res).toBe("Summary edited successfully")
-    // })
+    test("PUT /summary/id should return a successfull message and edit a summary",async ()=>{
+        const res = await request(app).put("/summary/77fee0ce-4a87-40cd-b58a-b15019489ce0").send({
+            title:"edited summary",
+            desc:"edited a summary",
+            pdf:"edited.pdf"
+        }).expect("Content-Type", /json/).expect(201)
+        expect(res.body).toEqual({message: "Summary edited successfully: "+ {"desc": "edited a summary", "id": "77fee0ce-4a87-40cd-b58a-b15019489ce0", "liked": 0, "likes": 0, "pdf": "edited.pdf", "title": "edited summary"}})
+    })
 
-    // test("DELETE /summary/id should delete a summary and return a message.",async ()=>{
-    //     const res= await request(app).delete("/summary/1").expect(201)
+    test("DELETE /summary/id should delete a summary and return a message.",async ()=>{
+        const res= await request(app).delete("/summary/c33e3530-e1e9-4d2c-89de-b6c66ace8422").expect("Content-Type", /json/).expect(200)
 
-    //     expect(res).toBe("Summary deleted successfully")
-    // })
+        expect(res.body).toEqual({message: "Summary Deleted Successfully"})
+    })
 })

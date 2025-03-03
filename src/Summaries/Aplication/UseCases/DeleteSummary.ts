@@ -5,9 +5,9 @@ export class DeleteSummaryUseCase{
         constructor(SummaryRepository:SummaryRepo){
             this.SummaryRepository = SummaryRepository
         }
-    exec(id:string){
+   async exec(id:string){
         try {
-            this.SummaryRepository.delete(id)
+            await this.SummaryRepository.delete(id)
             return "Summary Deleted Successfully"
         } catch (error) {
             return "Error in the Delete process : " + error

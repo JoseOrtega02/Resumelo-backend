@@ -57,21 +57,22 @@ export class SummaryController implements ISummaryController {
 
     async edit(req: Request, res: Response): Promise<void> {
         const useCase = new PutSummaryUseCase(this.repositoryInstance);
-        const { id, title, desc, pdf } = req.body;
+        const { title, desc, pdf } = req.body;
+        const {id} = req.params
         try {
-            await useCase.execute(title, desc, pdf, id);
-            res.json({ message: "Summary edited successfully" });
+            const message = await useCase.execute(title, desc, pdf, id);
+            res.status(201).json({ message: "Summary edited successfully: "+message});
         } catch (error) {
-            res.status(400).json({ error: "Failed to edit summary" });
+            res.status(500).json({ error: "Failed to edit summary" });
         }
     }
 
     async delete(req: Request, res: Response): Promise<void> {
         const useCase = new DeleteSummaryUseCase(this.repositoryInstance);
-        const { id } = req.body;
+        const { id } = req.params;
         try {
-            await useCase.exec(id);
-            res.json({ message: "Summary deleted successfully" });
+            const message = await useCase.exec(id);
+            res.status(200).json({ message});
         } catch (error) {
             res.status(400).json({ error: "Failed to delete summary" });
         }

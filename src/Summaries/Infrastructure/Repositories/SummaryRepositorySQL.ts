@@ -2,6 +2,7 @@ import { ISummary } from "../../Domain/Entities/ISummary";
 import { Summary } from "../../Domain/Entities/Summary";
 import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo";
 import  client  from "../../../DB/TursoDB";
+import { ResultSet } from "@libsql/client/.";
 
 export class SummaryRepositorySQL implements SummaryRepo{
     
@@ -12,7 +13,7 @@ export class SummaryRepositorySQL implements SummaryRepo{
                 args: [summary.getTitle(), summary.getDesc(), summary.getUrl(), summary.getId()]
             });
     
-            console.log("Insert Result:", res); // Log to check the actual response
+            // console.log("Insert Result:", res); // Log to check the actual response
     
             return res;
         } catch (error) {
@@ -55,15 +56,27 @@ export class SummaryRepositorySQL implements SummaryRepo{
     }
 
     async put(summary: Summary,id:string): Promise<Summary | null> {
-       
-
-         await client.execute({
+        try {
+            const res = await client.execute({
             sql:"UPDATE summaries SET title = ?, \"desc\" = ?, pdf = ? WHERE id = ?",
             args:[summary.getTitle(), summary.getDesc(),summary.getUrl(), id]})
-        return this.findById(id);
+            console.log(res)
+            const editedSummary = await this.findById(id);
+        return editedSummary
+        } catch (error) {
+            console.error('Error finding all summaries:', error);
+            throw new Error('Failed to retrieve summaries');
+        }
     }
 
-    async delete(id: string): Promise<void> {
-         await client.execute({sql:`DELETE FROM summaries WHERE id=?`,args:[id]})
+    async delete(id: string): Promise<void | ResultSet> {
+        try {
+           const res =  await client.execute({sql:`DELETE FROM summaries WHERE id=?`,args:[id]})
+           return res
+        } catch (error) {
+            console.error('Error finding all summaries:', error);
+            throw new Error('Failed to retrieve summaries');
+        }
+         
     }
 }
