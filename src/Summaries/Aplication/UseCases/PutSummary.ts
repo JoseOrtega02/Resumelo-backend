@@ -17,7 +17,7 @@ export class PutSummaryUseCase{
                 summary.setDesc(desc)
                 summary.setPdf(pdf)
                 newSummary =  await this.SummaryRepository.put(summary,id)
-                console.log(newSummary)
+                
             }
             return newSummary
         } catch (error) {
