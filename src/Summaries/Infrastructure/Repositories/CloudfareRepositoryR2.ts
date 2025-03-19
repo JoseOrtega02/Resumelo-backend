@@ -25,7 +25,7 @@ export class CloudflareRepositoryR2 implements DocumentRepository{
         }
          await s3Client.send(new PutObjectCommand(params))
         console.log("Archivo subido exitosamente:");
-        const url = `${this.cloudflareDomain}/${key}`
+        const url = `https://pub-ac9a813dedfc44f2aeb3fa94a4bed6b0.r2.dev/${key}`
         return url
     } catch (err) {
       console.error("Error al subir el archivo:", err);

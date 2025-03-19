@@ -7,6 +7,7 @@ import { Summary } from "../../Domain/Entities/Summary";
 import { CreateSummaryUseCase } from "../../Aplication/UseCases/CreateSumary";
 import { PutSummaryUseCase } from "../../Aplication/UseCases/PutSummary";
 import { DeleteSummaryUseCase } from "../../Aplication/UseCases/DeleteSummary";
+import { DocumentRepository } from "../../Infrastructure/Repositories/CloudfareRepositoryR2";
 
 interface ISummaryController {
     getAll(req: Request, res: Response): Promise<void>;
@@ -18,9 +19,10 @@ interface ISummaryController {
 
 export class SummaryController implements ISummaryController {
     private repositoryInstance: SummaryRepo;
-    
-    constructor(repo: SummaryRepo) {
+    private repositoryDocumentInstance: DocumentRepository
+    constructor(repo: SummaryRepo,docRepo: DocumentRepository) {
         this.repositoryInstance = repo;
+        this.repositoryDocumentInstance= docRepo
     }
 
     async getAll(req: Request, res: Response): Promise<void> {
@@ -45,7 +47,7 @@ export class SummaryController implements ISummaryController {
     }
 
     async create(req: Request, res: Response): Promise<void> {
-        const useCase = new CreateSummaryUseCase(this.repositoryInstance);
+        const useCase = new CreateSummaryUseCase(this.repositoryInstance,this.repositoryDocumentInstance);
         const { title, desc, pdf } = req.body;
         try {
             const message= await useCase.execute(title, desc, pdf);
@@ -68,7 +70,7 @@ export class SummaryController implements ISummaryController {
     }
 
     async delete(req: Request, res: Response): Promise<void> {
-        const useCase = new DeleteSummaryUseCase(this.repositoryInstance);
+        const useCase = new DeleteSummaryUseCase(this.repositoryInstance,this.repositoryDocumentInstance);
         const { id } = req.params;
         try {
             const message = await useCase.exec(id);

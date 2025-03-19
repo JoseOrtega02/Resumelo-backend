@@ -12,9 +12,11 @@ export class CreateSummaryUseCase {
 
     async execute(title: string, desc: string, pdf: string): Promise<string | undefined> {
         try { 
-            const url = await this.DocumentRepository.create(pdf,title)
+            const summary = new Summary(title, desc, "");
+            const url = await this.DocumentRepository.create(pdf,summary.getId())
+            console.log(url)
             if (url){
-            const summary = new Summary(title, desc, url);
+            summary.setPdf(url)
             await this.SummaryRepository.create(summary);
             return "Summary created successfully";
             }
