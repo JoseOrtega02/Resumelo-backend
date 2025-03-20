@@ -6,15 +6,15 @@ export class User implements IUser{
     private email:string
     private id:string
     private created_at:Date
-    constructor(name:string,email:string,creationDate:Date,id?:string){
+    constructor(name:string,email:string,creationDate?:Date,id?:string){
         this.name = name
         this.email= email
         this.id = id || randomUUID();
-        this.created_at = creationDate
+        this.created_at = creationDate || new Date()
     }
 
     getCreationDate(): string {
-        return this.created_at.toString()
+        return this.created_at.toLocaleDateString('es-ES'); 
     }
     getEmail(): string {
         return this.email

@@ -1,18 +1,17 @@
+import { UserRepo } from "../../Domain/Repositories/UserRepo";
 
-import { UserRepo } from "../../Domain/Repositories/UserRepo"
-
-export class  GetByIdUseCase{
+export class DeleteUseCase{
     private repository
     constructor(repo:UserRepo){
         this.repository= repo
     }
-
     async exec(id:string){
         try {
-            const data = await this.repository.getById(id)
-            return data
+            const res = await this.repository.delete(id)
+            return res
         } catch (error) {
             console.error(error)
         }
     }
+
 }

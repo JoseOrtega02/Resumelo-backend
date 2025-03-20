@@ -1,6 +1,8 @@
+import { UserRepo } from "../../Domain/Repositories/UserRepo"
+
 export class GetAllUseCase{
     private repository
-    constructor(repo){
+    constructor(repo:UserRepo){
         this.repository= repo
     }
     async exec(){
