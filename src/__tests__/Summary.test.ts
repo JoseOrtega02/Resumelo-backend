@@ -21,6 +21,7 @@ describe("GET /", () => {
 
 
 
+
 describe("Integration test for Summary API",()=>{
     // test("GET / Summary should return the list of all Summaries",async ()=>{
     //     const res = await request(app).get('/summary');
@@ -62,7 +63,7 @@ describe("Integration test for Summary API",()=>{
             .send(summaryData) // ✅ Send JSON body
             .expect("Content-Type", /json/)
             .expect(201); // ✅ Expect 201 Created
-    
+        
         expect(res.body).toEqual(
             "Summary created successfully"
         );
@@ -77,9 +78,9 @@ describe("Integration test for Summary API",()=>{
     //     expect(res.body).toEqual({message: "Summary edited successfully: "+ {"desc": "edited a summary", "id": "77fee0ce-4a87-40cd-b58a-b15019489ce0", "liked": 0, "likes": 0, "pdf": "edited.pdf", "title": "edited summary"}})
     // })
 
-    // test("DELETE /summary/id should delete a summary and return a message.",async ()=>{
-    //     const res= await request(app).delete("/summary/c33e3530-e1e9-4d2c-89de-b6c66ace8422").expect("Content-Type", /json/).expect(200)
+    test("DELETE /summary/id should delete a summary and return a message.",async ()=>{
+        const res= await request(app).delete("/summary/8bc020ab-9449-4bf5-9331-e8cf7dcd98d0").expect("Content-Type", /json/).expect(200)
 
-    //     expect(res.body).toEqual({message: "Summary Deleted Successfully"})
-    // })
+        expect(res.body).toEqual({message: "Summary Deleted Successfully"})
+    })
 })
