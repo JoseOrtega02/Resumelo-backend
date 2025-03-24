@@ -4,7 +4,7 @@ import { User } from "../Entities/User";
 export interface UserRepo{
     getById(id:string):Promise<User | undefined>
     getAll():Promise<User[] | undefined>
-    create(user:User):Promise<ResultSet | undefined>
+    create(user:User):Promise<ResultSet | string | undefined >
     update(newUser:User | undefined,id:string):Promise<User |undefined>
-    delete(id:string):Promise<void | ResultSet>
+    delete(id:string):Promise<void | string>
 }

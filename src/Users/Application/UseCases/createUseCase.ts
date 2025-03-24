@@ -9,8 +9,8 @@ export class CreateUseCase{
     async exec(name:string,email:string){
         try {
             const user= new User(name,email)
-            const res= await this.repository.create(user)
-            return res
+            await this.repository.create(user)
+            return "User Created successfully"
         } catch (error) {
             console.error(error)
         }

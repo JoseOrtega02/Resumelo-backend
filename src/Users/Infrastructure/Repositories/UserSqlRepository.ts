@@ -10,7 +10,9 @@ export class UserSqlRepository implements UserRepo{
                 sql:"INSERT INTO users (name,email,created_at,id) VALUES (?,?,?,?)",
                 args:[user.getName(),user.getEmail(),user.getCreationDate(),user.getId()]
             })
-            return res
+            console.log(res)
+           return res
+          
         } catch (error) {
             console.error('Error Creating  User:', error);
             throw new Error('Failed to Creating User');
@@ -54,7 +56,7 @@ export class UserSqlRepository implements UserRepo{
         try {
              await client.execute({
                 sql:"UPDATE users SET name=?,email=? WHERE id=?",
-                args:[newUser?.getName(),newUser?.getName(),id]
+                args:[newUser?.getName(),newUser?.getEmail(),id]
             })
             const editedUser = await this.getById(id)
             return editedUser
@@ -64,13 +66,13 @@ export class UserSqlRepository implements UserRepo{
         }
     }
 
-    async delete(id: string): Promise<void | ResultSet> {
+    async delete(id: string): Promise<void | string> {
         try {
             const res = await client.execute({
                 sql:"DELETE FROM users WHERE id = ?",
                 args:[id]
             })
-            return res
+            return "Deleted Succesfully"
         } catch (error) {
             console.error('Error Deleting  User:', error);
             throw new Error('Failed to Deleting User');
