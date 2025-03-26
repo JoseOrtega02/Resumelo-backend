@@ -1,20 +1,20 @@
 
-import{  Request, Response } from "express";
+import{  NextFunction, Request, Response } from "express";
 import { FindAllSummariesUseCase } from "../../Aplication/UseCases/FindAllSummary"
 import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo"
 import { FindByIdUseCase } from "../../Aplication/UseCases/FindByIdSummary";
-import { Summary } from "../../Domain/Entities/Summary";
 import { CreateSummaryUseCase } from "../../Aplication/UseCases/CreateSumary";
 import { PutSummaryUseCase } from "../../Aplication/UseCases/PutSummary";
 import { DeleteSummaryUseCase } from "../../Aplication/UseCases/DeleteSummary";
 import { DocumentRepository } from "../../Infrastructure/Repositories/CloudfareRepositoryR2";
+import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 
 interface ISummaryController {
-    getAll(req: Request, res: Response): Promise<void>;
-    getById(req: Request, res: Response): Promise<void>;
-    create(req: Request, res: Response): Promise<void>;
-    edit(req: Request, res: Response): Promise<void>;
-    delete(req: Request, res: Response): Promise<void>;
+    getAll(req: Request, res: Response,next:NextFunction): Promise<void>;
+    getById(req: Request, res: Response,next:NextFunction): Promise<void>;
+    create(req: Request, res: Response,next:NextFunction): Promise<void>;
+    edit(req: Request, res: Response,next:NextFunction): Promise<void>;
+    delete(req: Request, res: Response,next:NextFunction): Promise<void>;
 }
 
 export class SummaryController implements ISummaryController {
@@ -25,58 +25,63 @@ export class SummaryController implements ISummaryController {
         this.repositoryDocumentInstance= docRepo
     }
 
-    async getAll(req: Request, res: Response): Promise<void> {
+    async getAll(req: Request, res: Response,next:NextFunction): Promise<void> {
         try {
             
             const useCase = new FindAllSummariesUseCase(this.repositoryInstance);
-            const summaries = await useCase.exec(); // Added `await`
-            res.status(200).json(summaries); // Use `res.json()` for JSON responses
-        } catch (error) {
-            res.status(500).json({ error: "Failed to retrieve summaries" });
-        }
+            const summaries = await useCase.exec(); 
+            res.status(200).json(new ApiResponse("success","Summaries found",summaries)); 
+        }  catch (error) {
+            next(error)
+         }
     }
 
-    async getById(req: Request, res: Response): Promise<void> {
+    async getById(req: Request, res: Response,next:NextFunction): Promise<void> {
+        const {id} = req.params
         try {
             const useCase = new FindByIdUseCase(this.repositoryInstance);
-            const summary = await useCase.exec(req.params.id);
-            res.json(summary);
+            const summary = await useCase.exec(id);
+
+            res.status(200).json(new ApiResponse("success","Summary found",summary));
         } catch (error) {
-            res.status(404).json({ error: "Summary not found" });
+           next(error)
         }
     }
 
-    async create(req: Request, res: Response): Promise<void> {
+    async create(req: Request, res: Response,next:NextFunction): Promise<void> {
         const useCase = new CreateSummaryUseCase(this.repositoryInstance,this.repositoryDocumentInstance);
         const { title, desc, pdf } = req.body;
         try {
-            const message= await useCase.execute(title, desc, pdf);
-            res.status(201).json(message);
+            const data= await useCase.execute(title, desc, pdf);
+            if(data == null){
+                res.status(500).json(new ApiResponse("error","Something went wrong creating the summary"))
+            }
+            res.status(201).json(new ApiResponse("success","Summary created successfully",data));
         } catch (error) {
-            res.status(500).json({ error: error });
+            res.status(500).json(new ApiResponse("error","Internal Server Error"));
         }
     }
 
-    async edit(req: Request, res: Response): Promise<void> {
+    async edit(req: Request, res: Response,next:NextFunction): Promise<void> {
         const useCase = new PutSummaryUseCase(this.repositoryInstance);
         const { title, desc, pdf } = req.body;
         const {id} = req.params
         try {
-            const message = await useCase.execute(title, desc, pdf, id);
-            res.status(201).json({ message: "Summary edited successfully: "+message});
-        } catch (error) {
-            res.status(500).json({ error: "Failed to edit summary" });
-        }
+            const data = await useCase.execute(title, desc, pdf, id);
+            res.status(201).json(new ApiResponse("success","Summary edited successfully",data));
+        }  catch (error) {
+            next(error)
+         }
     }
 
-    async delete(req: Request, res: Response): Promise<void> {
+    async delete(req: Request, res: Response,next:NextFunction): Promise<void> {
         const useCase = new DeleteSummaryUseCase(this.repositoryInstance,this.repositoryDocumentInstance);
         const { id } = req.params;
         try {
             const message = await useCase.exec(id);
-            res.status(200).json({ message});
-        } catch (error) {
-            res.status(400).json({ error: "Failed to delete summary" });
-        }
+            res.status(200).json(new ApiResponse("success",message));
+        }  catch (error) {
+            next(error)
+         }
     }
 }

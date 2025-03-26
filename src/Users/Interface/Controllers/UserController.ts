@@ -1,69 +1,70 @@
 
-import{  Request, Response } from "express";
+import{  NextFunction, Request, Response } from "express";
 import { CreateUseCase } from "../../Application/UseCases/createUseCase";
 import { UserRepo } from "../../Domain/Repositories/UserRepo";
 import { GetByIdUseCase } from "../../Application/UseCases/getByIdUseCase";
 import { GetAllUseCase } from "../../Application/UseCases/getAllUseCase";
 import { UpdateUseCase } from "../../Application/UseCases/updateUseCase";
 import { DeleteUseCase } from "../../Application/UseCases/deleteUseCase";
+import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 
 export class UserController{
     private repository:UserRepo
     constructor(repo:UserRepo){
         this.repository= repo
     }
-    async create(req:Request,res:Response){
+    async create(req:Request,res:Response,next:NextFunction){
         const {name,email} = req.body
         const useCase = new CreateUseCase(this.repository)
         try {
             
             const data = await useCase.exec(name,email)
             
-            res.status(201).json(data)
+            res.status(201).json(new ApiResponse("success","User created Successfully",data))
         } catch (error) {
-            res.status(500).json({ error: error });
+           next(error)
         }
     }
-     async getById(req:Request,res:Response){
+     async getById(req:Request,res:Response,next:NextFunction){
         try {
             const {id} = req.params
             const useCase = new GetByIdUseCase(this.repository)
             const user = await useCase.exec(id)
-            res.status(200).json(user)
+            res.status(200).json(new ApiResponse("success","User found successfully",user))
         } catch (error) {
-            res.status(500).json({error:error})
+            next(error)
 
         }
      }
-     async getAll(req:Request,res:Response){
+     async getAll(req:Request,res:Response,next:NextFunction){
         try {
             const useCase= new GetAllUseCase(this.repository)
             const data = await useCase.exec()
-            res.status(200).json(data)
+            res.status(200).json(new ApiResponse("success","Users found successfully",data))
         } catch (error) {
-            res.status(500).json({error:error})
+            next(error)
         }
      }
-     async update(req:Request,res:Response){
+     async update(req:Request,res:Response,next:NextFunction){
         try {
             const {id} = req.params
             const {name,email} = req.body
            
             const useCase = new UpdateUseCase(this.repository)
             const data = await useCase.exec(id,name,email)
-            res.status(201).json(data)
+            res.status(201).json(new ApiResponse("success","User Edited successfully",data))
         } catch (error) {
-            res.status(500).json({error:error})
+            next(error)
         }
      }
-     async delete(req:Request,res:Response){
+     async delete(req:Request,res:Response,next:NextFunction){
         try {
             const {id} = req.params
             const useCase = new DeleteUseCase(this.repository)
-            const data = await useCase.exec(id)
-            res.status(200).json(data)
+            await useCase.exec(id)
+            res.status(200).json(new ApiResponse("success","User Deleted Successfully"))
         } catch (error) {
-            res.status(500).json({error:error})
+            next(error)
         }
      }
 }

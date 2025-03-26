@@ -8,11 +8,9 @@ export class  GetByIdUseCase{
     }
 
     async exec(id:string){
-        try {
+     
             const data = await this.repository.getById(id)
             return data
-        } catch (error) {
-            console.error(error)
-        }
+       
     }
 }

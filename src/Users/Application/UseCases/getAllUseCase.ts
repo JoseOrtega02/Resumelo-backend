@@ -6,11 +6,9 @@ export class GetAllUseCase{
         this.repository= repo
     }
     async exec(){
-        try {
-            const data = this.repository.getAll()
+       
+            const data =await  this.repository.getAll()
             return data
-        } catch (error) {
-            console.error(error)
-        }
+      
     }
 }

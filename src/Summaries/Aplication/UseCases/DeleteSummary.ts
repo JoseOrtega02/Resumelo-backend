@@ -9,13 +9,11 @@ export class DeleteSummaryUseCase{
             this.DocumentRepository= documentRepo
         }
    async exec(id:string){
-        try {
+       
             await this.DocumentRepository.delete(id)
             await this.SummaryRepository.delete(id)
             return "Summary Deleted Successfully"
-        } catch (error) {
-            return "Error in the Delete process : " + error
-        }
+        
          
     }
 }

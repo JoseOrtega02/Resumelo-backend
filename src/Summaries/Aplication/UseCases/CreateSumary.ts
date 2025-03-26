@@ -10,19 +10,17 @@ export class CreateSummaryUseCase {
         this.DocumentRepository= documentRepo
     }
 
-    async execute(title: string, desc: string, pdf: string): Promise<string | undefined> {
-        try { 
+    async execute(title: string, desc: string, pdf: string): Promise<Summary | null> {
+    
             const summary = new Summary(title, desc, "");
             const url = await this.DocumentRepository.create(pdf,summary.getId())
-            console.log(url)
+            
+            let res = null
             if (url){
-            summary.setPdf(url)
-            await this.SummaryRepository.create(summary);
-            return "Summary created successfully";
-            }
-        } catch (error) {
-            console.error("Error in summary creation:", error);
-            throw new Error("Failed to create summary");
-        }
+                summary.setPdf(url)
+                res = await this.SummaryRepository.create(summary);
+            } 
+            return res;
+        
     }
 }

@@ -8,9 +8,9 @@ export class PutSummaryUseCase{
         }
     
     async execute(title:string,desc:string,pdf:string,id:string): Promise<Summary | null>{
-        try {
+        
              const summary= await this.SummaryRepository.findById(id)
-             console.log(summary)
+            
             let newSummary = null
             if(summary){
                 summary.setTitle(title)
@@ -20,9 +20,7 @@ export class PutSummaryUseCase{
                 
             }
             return newSummary
-        } catch (error) {
-            throw new Error("Something gone wrong"+error)
-        }
+        
            
             
         }
