@@ -1,62 +1,24 @@
-import app from "../index"
+import {app,server} from "../index"
 
-import client from "../DB/TursoDB"
+
 
 import request from "supertest"
 
-  
-describe("GET /", () => {
-   
-  
-    it("should respond with status 200 and correct message", async () => {
-      const response = await request(app).get("/");
-  
-      // Check the response status
-      expect(response.status).toBe(200);
-  
-      // Check that the response body matches the expected string
-      expect(response.text).toBe("¡Hola, TypeScript con Express!");
-    });
-  });
-
-
-
+afterAll(() => {
+    server.close(); // Cierra el servidor después de todas las pruebas
+});
 
 describe("Integration test for Summary API",()=>{
-    // test("GET / Summary should return the list of all Summaries",async ()=>{
-    //     const res = await request(app).get('/summary');
-    // expect(res.status).toBe(200);
 
-    // const expected = {
-    //     desc: "Another summary description.",
-    //     id: "b6d22e48-1bb4-4d9c-92a4-8b920e67f8b5",
-    //     liked: 1,
-    //     likes: 5,
-    //     pdf: "another.pdf",
-    //     title: "Another Summary",
-    //   };
-      
-    //   expect(res.body).toContainEqual(expected);
-    // })
+    const summaryData = {
+        title: "Test-Summary",
+        desc: "This is a test summary",
+        pdf: "src/__tests__/minimal-document.pdf",
+        id:""
+    };
 
-    // test("GET /Summary/:id should return an specific summary",async () =>{
-    //     const res = await request(app).get("/summary/b6d22e48-1bb4-4d9c-92a4-8b920e67f8b5").expect(200)
-    //     expect(res.body).toEqual({
-    //         id: 'b6d22e48-1bb4-4d9c-92a4-8b920e67f8b5',
-    //         title: 'Another Summary',
-    //         desc: 'Another summary description.',
-    //         pdf: 'another.pdf',
-    //         likes: 5,
-    //         liked: 1
-    //       });
-    // })
-    
     test("POST /summary should return a successfull message and create a  summary",async ()=>{
-        const summaryData = {
-            title: "Test-Summary",
-            desc: "This is a test summary",
-            pdf: "src/__tests__/minimal-document.pdf"
-        };
+        
     
         const res = await request(app)
             .post("/summary")
@@ -64,23 +26,79 @@ describe("Integration test for Summary API",()=>{
             .expect("Content-Type", /json/)
             .expect(201); // ✅ Expect 201 Created
         
-        expect(res.body).toEqual(
+       summaryData.id= res.body.data.id
+        expect(res.body.message).toEqual(
             "Summary created successfully"
         );
     })
     
-    // test("PUT /summary/id should return a successfull message and edit a summary",async ()=>{
-    //     const res = await request(app).put("/summary/77fee0ce-4a87-40cd-b58a-b15019489ce0").send({
-    //         title:"edited summary",
-    //         desc:"edited a summary",
-    //         pdf:"edited.pdf"
-    //     }).expect("Content-Type", /json/).expect(201)
-    //     expect(res.body).toEqual({message: "Summary edited successfully: "+ {"desc": "edited a summary", "id": "77fee0ce-4a87-40cd-b58a-b15019489ce0", "liked": 0, "likes": 0, "pdf": "edited.pdf", "title": "edited summary"}})
-    // })
+
+    test("GET / Summary should return the list of all Summaries",async ()=>{
+        const res = await request(app).get('/summary');
+        
+        expect(res.status).toBe(200);
+
+    const expected = {
+        desc: summaryData.desc,
+        id:expect.stringMatching(
+            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+          ),
+        liked: 0,
+        likes: 0,
+        pdf: expect.stringMatching(
+           /^https:\/\/pub-[a-f0-9]{32}\.r2\.dev\/[a-f0-9\-]+/
+        ),
+        title: summaryData.title,
+      };
+      
+      expect(res.body.data).toContainEqual(expected);
+    })
+
+    test("GET /Summary/:id should return an specific summary",async () =>{
+        const res = await request(app).get(`/summary/${summaryData.id}`)
+        .expect(200)
+
+        expect(res.body.data).toEqual({
+            id: summaryData.id,
+            title:summaryData.title,
+            desc: summaryData.desc,
+            pdf:expect.stringMatching(
+               /^https:\/\/pub-[a-f0-9]{32}\.r2\.dev\/[a-f0-9\-]+/
+            ),
+            likes: 0,
+            liked: 0
+          });
+    })
+  
+    
+  
+    test("PUT /summary/id should return a successfull message and edit a summary",async ()=>{
+
+        const res = await request(app).put(`/summary/${summaryData.id}`)
+        .send({
+            title:"edited summary",
+            desc:"edited a summary",
+            pdf:summaryData.pdf
+        }).expect("Content-Type", /json/)
+        .expect(201)
+
+        expect(res.body.data).toEqual({
+            
+                "desc": "edited a summary", 
+                "id": summaryData.id, 
+                "liked": 0,
+                "likes": 0,
+                 "pdf":expect.stringMatching(
+            /^https:\/\/pub-[a-f0-9]{32}\.r2\.dev\/[a-f0-9\-]+/
+        ) 
+        , "title": "edited summary"})
+    })
 
     test("DELETE /summary/id should delete a summary and return a message.",async ()=>{
-        const res= await request(app).delete("/summary/8bc020ab-9449-4bf5-9331-e8cf7dcd98d0").expect("Content-Type", /json/).expect(200)
+        const res= await request(app).delete(`/summary/${summaryData.id}`)
+        .expect("Content-Type", /json/)
+        .expect(200)
 
-        expect(res.body).toEqual({message: "Summary Deleted Successfully"})
+        expect(res.body.message).toEqual("Summary Deleted Successfully")
     })
 })

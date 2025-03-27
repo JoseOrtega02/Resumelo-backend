@@ -11,6 +11,9 @@ export class UserSqlRepository implements UserRepo{
                 sql:"INSERT INTO users (name,email,created_at,id) VALUES (?,?,?,?)",
                 args:[user.getName(),user.getEmail(),user.getCreationDate(),user.getId()]
             })
+            console.log(res)
+            
+
             if(!res.rowsAffected){
                 throw new AppError("Error creating user",500)
             }

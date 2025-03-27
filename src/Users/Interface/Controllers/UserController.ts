@@ -7,6 +7,7 @@ import { GetAllUseCase } from "../../Application/UseCases/getAllUseCase";
 import { UpdateUseCase } from "../../Application/UseCases/updateUseCase";
 import { DeleteUseCase } from "../../Application/UseCases/deleteUseCase";
 import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
+import { AppError } from "../../../Shared/Interface/Responses/AppError";
 
 export class UserController{
     private repository:UserRepo
@@ -21,7 +22,7 @@ export class UserController{
             const data = await useCase.exec(name,email)
             
             res.status(201).json(new ApiResponse("success","User created Successfully",data))
-        } catch (error) {
+        } catch (error:any) {
            next(error)
         }
     }

@@ -1,32 +1,49 @@
 import request from "supertest"
-import app from "../index"
+import {app,server} from "../index"
+
+function getRandomInt(min:number, max:number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
+afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve)); 
+});
 
 describe("User integration tests Crud", ()=>{
+    const userPayload = {
+        name:"testUser",
+        email:`UserEmail${getRandomInt(0,11)}@gmail.com`,
+        id:""
+    }
+
+
     it("POST /user should create a user",async ()=>{
         const res = await request(app)
         .post("/user")
-        .send({
-            name:"testUser",
-            email:"UserEmail2@gmail.com"
-        })
+        .send(userPayload)
         .expect("Content-Type", /json/)
         .expect(201)
         
-        expect(res.body).toEqual(
-            "User Created successfully"
+        userPayload.id = res.body.data.id
+
+        expect(res.body.message).toEqual(
+            "User created Successfully"
         )
     })
 
     it("GET /user/id should return a specific user",async ()=>{
         const res = await request(app)
-        .get("/user/09b7fa73-0b0b-494b-95b5-2e19ea240b6f")
+        .get(`/user/${userPayload.id}`)
         .expect(200)
 
-        expect(res.body).toEqual({
+        expect(res.body.data).toEqual({
             "created_at": expect.any(String),
-             "email": "UserEmail@gmail.com",
-              "id": "09b7fa73-0b0b-494b-95b5-2e19ea240b6f",
-           "name": "testUser"})
+             "email": userPayload.email,
+              "id": expect.stringMatching(
+                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/ ),
+           "name": userPayload.name})
     })
 
     it("GET /user should return all users",async ()=>{
@@ -34,32 +51,33 @@ describe("User integration tests Crud", ()=>{
         .get("/user")
         .expect(200)
 
-        expect(res.body).toContainEqual({
+        expect(res.body.data).toContainEqual({
             "created_at": expect.any(String),
-             "email": "UserEmail@gmail.com",
+             "email": userPayload.email,
               "id": expect.stringMatching(
-                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-              ),
-           "name": "testUser"})
+                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/ ),
+           "name": userPayload.name})
     })
     it("PUT /user/id should edit the name and email of user",async ()=>{
+
         const res = await request(app)
-        .put("/user/2a171eef-35c8-4adb-a2d9-8520db9d51b8")
+        .put(`/user/${userPayload.id}`)
         .send({name:"editedUser",email:"editedUser@gmail.com"})
         .expect(201)
 
-        expect(res.body).toEqual({
+        expect(res.body.data).toEqual({
             "created_at": expect.any(String),
              "email": "editedUser@gmail.com",
-              "id": "2a171eef-35c8-4adb-a2d9-8520db9d51b8",
+              "id": userPayload.id,
            "name": "editedUser"
         })
     })
-    // it("DELETE /user should delete a user",async ()=>{
-    //     const res = await request(app)
-    //     .delete("/user/62f1901f-e957-49ad-be67-918e15ebf45b")
-    //     .expect(200)
 
-    //     expect(res.body).toEqual("Deleted Succesfully")
-    // })
+    it("DELETE /user should delete a user",async ()=>{
+        const res = await request(app)
+        .delete(`/user/${userPayload.id}`)
+        .expect(200)
+
+        expect(res.body.message).toEqual("User Deleted Successfully")
+    })
 })

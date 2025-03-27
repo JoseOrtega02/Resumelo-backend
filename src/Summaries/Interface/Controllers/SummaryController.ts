@@ -63,7 +63,7 @@ export class SummaryController implements ISummaryController {
     }
 
     async edit(req: Request, res: Response,next:NextFunction): Promise<void> {
-        const useCase = new PutSummaryUseCase(this.repositoryInstance);
+        const useCase = new PutSummaryUseCase(this.repositoryInstance,this.repositoryDocumentInstance);
         const { title, desc, pdf } = req.body;
         const {id} = req.params
         try {

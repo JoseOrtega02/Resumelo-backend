@@ -16,9 +16,8 @@ app.use("/summary",router)
 app.use("/user",userRouter)
 
 app.use(errorHandler)
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
-
-export default app
+export { app, server };
