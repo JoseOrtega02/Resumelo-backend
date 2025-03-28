@@ -6,15 +6,13 @@ export class UpdateUseCase{
         this.repository= repo
     }
     async exec(id:string,name:string,email:string){
-        try {
+    
         const summary = await this.repository.getById(id)
         summary?.setEmail(email)
         summary?.setName(name)
         const res = await this.repository.update(summary,id)
         return res
-        } catch (error) {
-            console.error(error)
-        }
+       
        
     }
 }
