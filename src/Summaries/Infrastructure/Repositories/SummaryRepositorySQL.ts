@@ -1,7 +1,7 @@
 import { ISummary } from "../../Domain/Entities/ISummary";
 import { Summary } from "../../Domain/Entities/Summary";
 import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo";
-import client from "../../../DB/TursoDB";
+import { client } from "../../../DB/TursoDB";
 import { ResultSet } from "@libsql/client/.";
 import { AppError } from "../../../Shared/Interface/Responses/AppError";
 

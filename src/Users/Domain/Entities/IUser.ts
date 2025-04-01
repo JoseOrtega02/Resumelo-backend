@@ -1,9 +1,11 @@
-export interface IUser{
-    getEmail():string
-    getName():string
-    getId():string
-    getCreationDate():string
+export interface IUser {
+  getPassword(): string;
+  getEmail(): string;
+  getName(): string;
+  getId(): string;
+  getCreationDate(): string;
 
-    setEmail(newEmail:string):void
-    setName(newName:string):void
+  setPassword(newPassword: string): void;
+  setEmail(newEmail: string): void;
+  setName(newName: string): void;
 }

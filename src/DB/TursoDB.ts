@@ -18,9 +18,18 @@ async function setupDatabase() {
       liked BOOLEAN DEFAULT FALSE
     );
   `);
-  console.log("✅ Summaries table initialized.");
+  await client.execute(`
+CREATE TABLE IF NOT EXISTS users(
+      id TEXT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      password VARCHAR(255) NOT NULL
+    );
+    `);
+  console.log("✅ Summaries and users table initialized.");
 }
 
 setupDatabase();
 
-export default client;
+export { client, setupDatabase };
