@@ -16,6 +16,7 @@ afterAll(async () => {
 });
 
 describe("User integration tests Crud", () => {
+  let token: string;
   const userPayload = {
     name: "testUser",
     email: `UserEmail${getRandomInt(0, 11)}@gmail.com`,
@@ -62,6 +63,16 @@ describe("User integration tests Crud", () => {
       password: "",
     });
   });
+  it("POST /login should return the jwt token", async () => {
+    const res = await request(app)
+      .post("/login")
+      .send({ email: userPayload.email, password: userPayload.password })
+      .expect(200);
+    expect(res.body.data).toEqual(
+      expect.stringMatching(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/)
+    );
+    token = res.body.data;
+  });
   it("PUT /user/id should edit the name and email of user", async () => {
     const res = await request(app)
       .put(`/user/${userPayload.id}`)
@@ -70,6 +81,7 @@ describe("User integration tests Crud", () => {
         email: "editedUser@gmail.com",
         password: "editedPassword",
       })
+      .set("Authorization", `Bearer ${token}`)
       .expect(201);
 
     expect(res.body.data).toEqual({
@@ -84,6 +96,7 @@ describe("User integration tests Crud", () => {
   it("DELETE /user should delete a user", async () => {
     const res = await request(app)
       .delete(`/user/${userPayload.id}`)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200);
 
     expect(res.body.message).toEqual("User Deleted Successfully");

@@ -1,8 +1,29 @@
 import { app, server } from "../index";
 
 import request from "supertest";
-
-afterAll(() => {
+let token: string;
+let userId: string;
+beforeAll(async () => {
+  const user = await request(app)
+    .post("/user")
+    .send({
+      name: "testSummary",
+      email: "testSummary",
+      password: "testSummary",
+    })
+    .expect(201);
+  userId = user.body.data.id;
+  const res = await request(app)
+    .post("/login")
+    .send({ email: "testSummary", password: "testSummary" })
+    .expect(200);
+  token = res.body.data;
+});
+afterAll(async () => {
+  await request(app)
+    .delete(`/user/${userId}`)
+    .set("Authorization", `Bearer ${token}`)
+    .expect(200);
   server.close(); // Cierra el servidor después de todas las pruebas
 });
 
@@ -18,9 +39,10 @@ describe("Integration test for Summary API", () => {
   test("POST /summary should return a successfull message and create a  summary", async () => {
     const res = await request(app)
       .post("/summary")
-      .send(summaryData) // ✅ Send JSON body
+      .send(summaryData)
+      .set("Authorization", `Bearer ${token}`)
       .expect("Content-Type", /json/)
-      .expect(201); // ✅ Expect 201 Created
+      .expect(201);
 
     summaryData.id = res.body.data.id;
     expect(res.body.message).toEqual("Summary created successfully");
@@ -74,6 +96,7 @@ describe("Integration test for Summary API", () => {
         desc: "edited a summary",
         pdf: summaryData.pdf,
       })
+      .set("Authorization", `Bearer ${token}`)
       .expect("Content-Type", /json/)
       .expect(201);
 
@@ -93,6 +116,7 @@ describe("Integration test for Summary API", () => {
   test("DELETE /summary/id should delete a summary and return a message.", async () => {
     const res = await request(app)
       .delete(`/summary/${summaryData.id}`)
+      .set("Authorization", `Bearer ${token}`)
       .expect("Content-Type", /json/)
       .expect(200);
 
