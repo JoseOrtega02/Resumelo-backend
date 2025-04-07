@@ -76,7 +76,6 @@ export class SummaryRepositorySQL implements SummaryRepo {
     if (!res.rowsAffected) {
       throw new AppError("Error updating summary", 500);
     }
-    console.log(res);
     const editedSummary = await this.findById(id);
     return editedSummary;
   }

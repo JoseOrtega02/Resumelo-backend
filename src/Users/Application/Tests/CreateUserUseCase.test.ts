@@ -12,7 +12,7 @@ test("Create user test-Unitary Test", async () => {
   );
 
   expect(res).toEqual({
-    created_at: expect.any(String),
+    created_at: expect.any(Date),
     email: "user@gmail.com",
 
     id: expect.stringMatching(

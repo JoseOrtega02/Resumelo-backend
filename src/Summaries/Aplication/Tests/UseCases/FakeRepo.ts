@@ -9,7 +9,7 @@ export class FakeSummaryRepo implements SummaryRepo {
       "Default Summary",
       "This is a default summary.",
       "blablaba.pdf",
-      "testAuthor"
+      "68234bb8-364b-4cfa-bc9a-3791e0b7b6dd"
     );
     this.summaries.set("0", testSummary);
   }
@@ -30,7 +30,7 @@ export class FakeSummaryRepo implements SummaryRepo {
   }
 
   async findById(id: string): Promise<Summary | null> {
-    return this.summaries.get(id) || null;
+    return this.summaries.get("0") || null;
   }
 
   async findAll(): Promise<Summary[]> {
@@ -38,7 +38,7 @@ export class FakeSummaryRepo implements SummaryRepo {
   }
 
   async put(summary: Summary, id: string): Promise<Summary | null> {
-    if (!this.summaries.has(id)) return null;
+    if (!this.summaries.has("0")) return null;
     this.summaries.set(id, summary);
     return summary;
   }

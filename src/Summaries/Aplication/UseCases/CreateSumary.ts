@@ -32,13 +32,17 @@ export class CreateSummaryUseCase {
     });
 
     const summary = new Summary(title, desc, "", author);
-    const url = await this.DocumentRepository.create(pdf, summary.getId());
 
-    let res = null;
-    if (url) {
-      summary.setPdf(url);
-      res = await this.SummaryRepository.create(summary);
+    const url = await this.DocumentRepository.create(pdf, summary.getId());
+    if (!url) return null;
+    summary.setPdf(url);
+    const res = await this.SummaryRepository.create(summary);
+
+    if (!res) {
+      this.DocumentRepository.delete(summary.getId());
+      return null;
     }
+
     return res;
   }
 }

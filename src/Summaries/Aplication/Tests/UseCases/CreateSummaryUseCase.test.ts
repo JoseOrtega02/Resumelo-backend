@@ -11,7 +11,7 @@ test("Create a summary use case-Unit Testing", async () => {
     "test Summary",
     "its just a test case",
     "test.pdf",
-    "test author"
+    "68234bb8-364b-4cfa-bc9a-3791e0b7b6dd"
   );
 
   expect(res).toEqual({
@@ -19,7 +19,9 @@ test("Create a summary use case-Unit Testing", async () => {
     id: expect.stringMatching(
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
     ),
-    author: "test author",
+    author: expect.stringMatching(
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+    ),
     liked: false,
     likes: 0,
     pdf: expect.stringMatching(/^https\/\/:fakeurl\.com\/[a-f0-9\-]+$/),

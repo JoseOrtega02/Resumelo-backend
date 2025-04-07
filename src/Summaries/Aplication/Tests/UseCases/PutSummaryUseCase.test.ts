@@ -11,14 +11,16 @@ test("Put Summary use case-Unit test", async () => {
     "new Summary",
     "new summary edited xd",
     "edited.pdf",
-    "0"
+    "68234bb8-364b-4cfa-bc9a-3791e0b7b6dd"
   );
 
   expect(res).toEqual({
     id: expect.stringMatching(
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
     ),
-    author: "testAuthor",
+    author: expect.stringMatching(
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+    ),
     title: "new Summary",
     desc: "new summary edited xd",
     pdf: expect.stringMatching(/^https\/\/:fakeurl\.com\/[a-f0-9\-]+$/),

@@ -11,10 +11,6 @@ beforeAll(async () => {
   await setupDatabase();
 });
 
-afterAll(async () => {
-  await new Promise((resolve) => server.close(resolve));
-});
-
 describe("User integration tests Crud", () => {
   let token: string;
   const userPayload = {

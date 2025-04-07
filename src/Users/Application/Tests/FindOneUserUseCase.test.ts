@@ -5,7 +5,7 @@ import { FakeUserRepo } from "./FakeUserRepo";
 test("Get one user use case-Unitary test", async () => {
   const fakeRepo = new FakeUserRepo();
   const useCase = new GetByIdUseCase(fakeRepo);
-  const res = await useCase.exec("testuuidid");
+  const res = await useCase.exec("68234bb8-364b-4cfa-bc9a-3791e0b7b6dd");
   expect(res).toEqual({
     password: "",
     created_at: expect.any(Date),
