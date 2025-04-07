@@ -7,6 +7,9 @@ import { UpdateUseCase } from "../../Application/UseCases/updateUseCase";
 import { DeleteUseCase } from "../../Application/UseCases/deleteUseCase";
 import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 import { AppError } from "../../../Shared/Interface/Responses/AppError";
+import { CreateUserSchema } from "../Schemas/CreateUserSchema";
+import { IdSchema } from "../Schemas/IdSchema";
+import { UpdateUserSchema } from "../Schemas/UpdateUserSchema";
 
 export class UserController {
   private repository: UserRepo;
@@ -16,6 +19,7 @@ export class UserController {
   async create(req: Request, res: Response, next: NextFunction) {
     const { name, email, password } = req.body;
     const useCase = new CreateUseCase(this.repository);
+
     try {
       const data = await useCase.exec(name, email, password);
 
@@ -26,9 +30,11 @@ export class UserController {
       next(error);
     }
   }
+
   async getById(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+
     try {
-      const { id } = req.params;
       const useCase = new GetByIdUseCase(this.repository);
       const user = await useCase.exec(id);
       res
@@ -38,6 +44,7 @@ export class UserController {
       next(error);
     }
   }
+
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const useCase = new GetAllUseCase(this.repository);
@@ -49,11 +56,11 @@ export class UserController {
       next(error);
     }
   }
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { id } = req.params;
-      const { name, email, password } = req.body;
 
+  async update(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+    try {
       const useCase = new UpdateUseCase(this.repository);
       const data = await useCase.exec(id, name, email, password);
       res
@@ -63,9 +70,10 @@ export class UserController {
       next(error);
     }
   }
+
   async delete(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
     try {
-      const { id } = req.params;
       const useCase = new DeleteUseCase(this.repository);
       await useCase.exec(id);
       res

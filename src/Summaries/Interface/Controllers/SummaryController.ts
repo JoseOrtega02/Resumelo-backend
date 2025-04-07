@@ -7,6 +7,9 @@ import { PutSummaryUseCase } from "../../Aplication/UseCases/PutSummary";
 import { DeleteSummaryUseCase } from "../../Aplication/UseCases/DeleteSummary";
 import { DocumentRepository } from "../../Infrastructure/Repositories/CloudfareRepositoryR2";
 import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
+import { IdSchema } from "../../../Users/Interface/Schemas/IdSchema";
+import { CreateSummarySchema } from "../Schemas/CreateSummarySchema";
+import { UpdateSummarySchema } from "../Schemas/UpdateSummarySchema";
 
 interface ISummaryController {
   getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -42,6 +45,10 @@ export class SummaryController implements ISummaryController {
     next: NextFunction
   ): Promise<void> {
     const { id } = req.params;
+    const result = IdSchema.safeParse(id);
+    if (!result.success) {
+      res.status(400).json(new ApiResponse("error", result.error.message));
+    }
     try {
       const useCase = new FindByIdUseCase(this.repositoryInstance);
       const summary = await useCase.exec(id);
@@ -76,7 +83,7 @@ export class SummaryController implements ISummaryController {
         .status(201)
         .json(new ApiResponse("success", "Summary created successfully", data));
     } catch (error) {
-      res.status(500).json(new ApiResponse("error", "Internal Server Error"));
+      next(error);
     }
   }
 
@@ -87,6 +94,19 @@ export class SummaryController implements ISummaryController {
     );
     const { title, desc, pdf } = req.body;
     const { id } = req.params;
+
+    const result = IdSchema.safeParse(id);
+    if (!result.success) {
+      res.status(400).json(new ApiResponse("error", result.error.message));
+    }
+    const bodyResult = UpdateSummarySchema.safeParse({
+      title: title,
+      desc: desc,
+      pdf: pdf,
+    });
+    if (!bodyResult.success) {
+      res.status(400).json(new ApiResponse("error", bodyResult.error.message));
+    }
     try {
       const data = await useCase.execute(title, desc, pdf, id);
       res
@@ -103,6 +123,10 @@ export class SummaryController implements ISummaryController {
       this.repositoryDocumentInstance
     );
     const { id } = req.params;
+    const result = IdSchema.safeParse(id);
+    if (!result.success) {
+      res.status(400).json(new ApiResponse("error", result.error.message));
+    }
     try {
       const message = await useCase.exec(id);
       res.status(200).json(new ApiResponse("success", message));

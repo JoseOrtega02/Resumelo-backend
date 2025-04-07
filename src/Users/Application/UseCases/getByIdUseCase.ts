@@ -1,16 +1,18 @@
+import { ValidateSchema } from "../../../Shared/Application/ValidateSchema";
+import { UserRepo } from "../../Domain/Repositories/UserRepo";
+import { IdSchema } from "../../Interface/Schemas/IdSchema";
 
-import { UserRepo } from "../../Domain/Repositories/UserRepo"
+export class GetByIdUseCase {
+  private repository;
+  private validate: ValidateSchema;
+  constructor(repo: UserRepo) {
+    this.repository = repo;
+    this.validate = new ValidateSchema(IdSchema);
+  }
 
-export class  GetByIdUseCase{
-    private repository
-    constructor(repo:UserRepo){
-        this.repository= repo
-    }
-
-    async exec(id:string){
-     
-            const data = await this.repository.getById(id)
-            return data
-       
-    }
+  async exec(id: string) {
+    this.validate.validate(id);
+    const data = await this.repository.getById(id);
+    return data;
+  }
 }

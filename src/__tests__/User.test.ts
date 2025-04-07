@@ -21,7 +21,7 @@ describe("User integration tests Crud", () => {
     name: "testUser",
     email: `UserEmail${getRandomInt(0, 11)}@gmail.com`,
     id: "",
-    password: "test123",
+    password: "Test123*",
   };
 
   it("POST /user should create a user", async () => {
@@ -32,13 +32,11 @@ describe("User integration tests Crud", () => {
       .expect(201);
 
     userPayload.id = res.body.data.id;
-    console.log(res.body);
     expect(res.body.message).toEqual("User created Successfully");
   });
 
   it("GET /user/id should return a specific user", async () => {
     const res = await request(app).get(`/user/${userPayload.id}`).expect(200);
-    console.log(userPayload.id);
     expect(res.body.data).toEqual({
       created_at: expect.any(String),
       email: userPayload.email,
@@ -63,6 +61,7 @@ describe("User integration tests Crud", () => {
       password: "",
     });
   });
+
   it("POST /login should return the jwt token", async () => {
     const res = await request(app)
       .post("/login")
@@ -73,13 +72,14 @@ describe("User integration tests Crud", () => {
     );
     token = res.body.data;
   });
+
   it("PUT /user/id should edit the name and email of user", async () => {
     const res = await request(app)
       .put(`/user/${userPayload.id}`)
       .send({
         name: "editedUser",
         email: "editedUser@gmail.com",
-        password: "editedPassword",
+        password: "EditedPassword1*",
       })
       .set("Authorization", `Bearer ${token}`)
       .expect(201);

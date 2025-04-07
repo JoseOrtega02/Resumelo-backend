@@ -1,15 +1,17 @@
-import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo"
+import { ValidateSchema } from "../../../Shared/Application/ValidateSchema";
+import { IdSchema } from "../../../Users/Interface/Schemas/IdSchema";
+import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo";
 
-export class FindByIdUseCase{
-     private SummaryRepository: SummaryRepo
-        constructor(SummaryRepository:SummaryRepo){
-            this.SummaryRepository = SummaryRepository
-        }
-    async exec(id:string){
-   
-            
-            return await this.SummaryRepository.findById(id)
-        
-        
-    }
+export class FindByIdUseCase {
+  private SummaryRepository: SummaryRepo;
+  private idValidate: ValidateSchema;
+  constructor(SummaryRepository: SummaryRepo) {
+    this.SummaryRepository = SummaryRepository;
+    this.idValidate = new ValidateSchema(IdSchema);
+  }
+  async exec(id: string) {
+    this.idValidate.validate(id);
+
+    return await this.SummaryRepository.findById(id);
+  }
 }

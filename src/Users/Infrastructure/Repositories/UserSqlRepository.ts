@@ -15,7 +15,6 @@ export class UserSqlRepository implements UserRepo {
         user.getId(),
       ],
     });
-    console.log(res);
 
     if (!res.rowsAffected) {
       throw new AppError("Error creating user", 500);
@@ -23,6 +22,7 @@ export class UserSqlRepository implements UserRepo {
     const newUser = await this.getById(user.getId());
     return newUser;
   }
+
   async getById(id: string): Promise<User | undefined> {
     const res = await client.execute({
       sql: "SELECT id, name, email, created_at FROM users WHERE id=?",

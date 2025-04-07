@@ -8,14 +8,14 @@ beforeAll(async () => {
     .post("/user")
     .send({
       name: "testSummary",
-      email: "testSummary",
-      password: "testSummary",
+      email: "testSummary@gmail.com",
+      password: "testSummary1*",
     })
     .expect(201);
   userId = user.body.data.id;
   const res = await request(app)
     .post("/login")
-    .send({ email: "testSummary", password: "testSummary" })
+    .send({ email: "testSummary@gmail.com", password: "testSummary1*" })
     .expect(200);
   token = res.body.data;
 });
@@ -32,15 +32,17 @@ describe("Integration test for Summary API", () => {
     title: "Test-Summary",
     desc: "This is a test summary",
     pdf: "src/__tests__/minimal-document.pdf",
-    author: "testAuthor",
+
+    author: "",
     id: "",
   };
 
   test("POST /summary should return a successfull message and create a  summary", async () => {
+    summaryData.author = userId;
     const res = await request(app)
       .post("/summary")
-      .send(summaryData)
       .set("Authorization", `Bearer ${token}`)
+      .send(summaryData)
       .expect("Content-Type", /json/)
       .expect(201);
 

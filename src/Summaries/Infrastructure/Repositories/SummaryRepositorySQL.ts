@@ -18,6 +18,7 @@ export class SummaryRepositorySQL implements SummaryRepo {
       ],
     });
     if (!insert.rowsAffected) {
+      console.error(insert);
       throw new AppError("Error creating the summary", 500);
     }
     const res = await this.findById(summary.getId());
