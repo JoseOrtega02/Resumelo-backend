@@ -30,8 +30,15 @@ app.use("/user", userRouter);
 app.use("/login", loginRouter);
 app.use(errorHandler);
 
-const server = app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+let server: ReturnType<typeof app.listen> | undefined = undefined;
 
+// Solo iniciar el server si NO estamos en test o producción serverless (Vercel)
+if (process.env.NODE_ENV !== "test" && process.env.NODE_ENV !== "production") {
+  server = app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+}
+
+// Para testing y Vercel
 export { app, server };
+export default app;
