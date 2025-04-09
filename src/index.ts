@@ -8,7 +8,7 @@ import rateLimit from "express-rate-limit";
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 const corsOptions = {
-  origin: ["*"],
+  origin: ["http://localhost:3000"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -22,6 +22,7 @@ const limiter = rateLimit({
 });
 app.use(express.json());
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(limiter);
 
 app.get("/", (req: Request, res: Response) => {
