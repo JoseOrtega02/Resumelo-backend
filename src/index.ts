@@ -8,9 +8,10 @@ import rateLimit from "express-rate-limit";
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 const corsOptions = {
-  origin: "http://localhost:3000/",
+  origin: "http://localhost:3000",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 };
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
