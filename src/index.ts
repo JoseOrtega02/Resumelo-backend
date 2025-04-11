@@ -5,14 +5,15 @@ import { errorHandler } from "./Middlewares/ErrorHandler";
 import loginRouter from "./Users/Interface/Routes/LoginRoutes";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
-// const corsOptions = {
-//   origin: ["http://localhost:3000"],
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//   allowedHeaders: ["Content-Type", "Authorization"],
-//   credentials: true,
-// };
+const corsOptions = {
+  origin: ["http://localhost:3001"],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // Máximo de 100 peticiones
@@ -21,26 +22,9 @@ const limiter = rateLimit({
   legacyHeaders: false, // Desactiva `X-RateLimit-*` headers antiguos
 });
 app.use(express.json());
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
+app.use(cookieParser());
 // app.options("*", cors(corsOptions));
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,HEAD,OPTIONS,POST,PUT,DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
 app.use(limiter);
 
 app.get("/", (req: Request, res: Response) => {

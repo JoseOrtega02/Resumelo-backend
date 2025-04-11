@@ -1,3 +1,4 @@
+import { File } from "buffer";
 import { ValidateSchema } from "../../../Shared/Application/ValidateSchema";
 import { AppError } from "../../../Shared/Interface/Responses/AppError";
 import { Summary } from "../../Domain/Entities/Summary";
@@ -21,7 +22,7 @@ export class CreateSummaryUseCase {
   async execute(
     title: string,
     desc: string,
-    pdf: string,
+    pdf: Express.Multer.File | undefined,
     author: string
   ): Promise<Summary | null> {
     this.validation.validate({
@@ -30,10 +31,15 @@ export class CreateSummaryUseCase {
       pdf: pdf,
       author: author,
     });
-
+    if (!pdf) {
+      throw new AppError("file not provided", 400);
+    }
     const summary = new Summary(title, desc, "", author);
 
-    const url = await this.DocumentRepository.create(pdf, summary.getId());
+    const url = await this.DocumentRepository.create(
+      pdf.buffer,
+      summary.getId()
+    );
     if (!url) return null;
     summary.setPdf(url);
     const res = await this.SummaryRepository.create(summary);

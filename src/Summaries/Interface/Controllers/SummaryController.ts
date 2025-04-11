@@ -66,7 +66,8 @@ export class SummaryController implements ISummaryController {
       this.repositoryInstance,
       this.repositoryDocumentInstance
     );
-    const { title, desc, pdf, author } = req.body;
+    const { title, desc, author } = req.body;
+    const pdf = req.file;
     try {
       const data = await useCase.execute(title, desc, pdf, author);
       if (data == null) {
