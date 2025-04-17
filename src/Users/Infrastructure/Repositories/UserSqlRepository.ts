@@ -83,14 +83,4 @@ export class UserSqlRepository implements UserRepo {
     }
     return "Deleted Succesfully";
   }
-  async checkUser(id: string) {
-    const res = await client.execute({
-      sql: "SELECT name,email,id FROM users WHERE id=?",
-      args: [id],
-    });
-    if (!res.rows.length) {
-      throw new AppError("Error getting the user", 404);
-    }
-    return res.rows[0];
-  }
 }

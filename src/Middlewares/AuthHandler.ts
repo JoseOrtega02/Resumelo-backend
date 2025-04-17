@@ -8,7 +8,6 @@ export const AuthHandler = (
 ) => {
   try {
     const token = req.cookies.access_token;
-    console.log(token);
     if (!token) {
       res.status(401).json({ success: false, message: "Unauthorized" });
       return;
