@@ -63,7 +63,7 @@ WHERE summaries.id = ?`,
 
   async findAll(): Promise<SummaryWithAuthor[]> {
     const response = await client.execute(
-      "SELECT summaries.id,summaries.desc,summaries.pdf,summaries.author,summaries.likes,summaries.liked,users.email,users.name FROM summaries JOIN users ON author = users.id"
+      "SELECT summaries.id,summaries.title,summaries.desc,summaries.pdf,summaries.author,summaries.likes,summaries.liked,users.email,users.name FROM summaries JOIN users ON author = users.id"
     );
     if (!response || !response.rows) {
       return [];
