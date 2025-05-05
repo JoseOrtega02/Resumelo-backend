@@ -6,6 +6,7 @@ import loginRouter from "./Users/Interface/Routes/LoginRoutes";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
+import likesRouter from "./Likes/interface/Routes/LikesRoutes";
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 const corsOptions = {
@@ -34,6 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/summary", router);
 app.use("/user", userRouter);
 app.use("/login", loginRouter);
+app.use("/like", likesRouter);
 app.use(errorHandler);
 
 let server: ReturnType<typeof app.listen> | undefined = undefined;
