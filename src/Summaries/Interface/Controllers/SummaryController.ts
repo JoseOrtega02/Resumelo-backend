@@ -10,6 +10,7 @@ import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 import { IdSchema } from "../../../Users/Interface/Schemas/IdSchema";
 import { CreateSummarySchema } from "../Schemas/CreateSummarySchema";
 import { UpdateSummarySchema } from "../Schemas/UpdateSummarySchema";
+import { LikesRepo } from "../../../Likes/infrastructure/Repositories/LikesRepositorySQL";
 
 interface ISummaryController {
   getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -22,9 +23,15 @@ interface ISummaryController {
 export class SummaryController implements ISummaryController {
   private repositoryInstance: SummaryRepo;
   private repositoryDocumentInstance: DocumentRepository;
-  constructor(repo: SummaryRepo, docRepo: DocumentRepository) {
+  private likesRepository: LikesRepo;
+  constructor(
+    repo: SummaryRepo,
+    docRepo: DocumentRepository,
+    likesRepo: LikesRepo
+  ) {
     this.repositoryInstance = repo;
     this.repositoryDocumentInstance = docRepo;
+    this.likesRepository = likesRepo;
   }
 
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -50,7 +57,10 @@ export class SummaryController implements ISummaryController {
       res.status(400).json(new ApiResponse("error", result.error.message));
     }
     try {
-      const useCase = new FindByIdUseCase(this.repositoryInstance);
+      const useCase = new FindByIdUseCase(
+        this.repositoryInstance,
+        this.likesRepository
+      );
       const summary = await useCase.exec(id);
 
       res

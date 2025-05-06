@@ -5,18 +5,21 @@ import { CloudflareRepositoryR2 } from "../../Infrastructure/Repositories/Cloudf
 import { CLOUDFLARE_URL_R2 } from "../../../config.env";
 import { AuthHandler } from "../../../Middlewares/AuthHandler";
 import multer from "multer";
+import { LikesRepositorySQL } from "../../../Likes/infrastructure/Repositories/LikesRepositorySQL";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 const repositoryInstance = new SummaryRepositorySQL();
+const likesRepository = new LikesRepositorySQL();
 const documentRepositoryInstance = new CloudflareRepositoryR2(
   "resumelo-test",
   CLOUDFLARE_URL_R2 || ""
 );
 const summaryController = new SummaryController(
   repositoryInstance,
-  documentRepositoryInstance
+  documentRepositoryInstance,
+  likesRepository
 );
 const router = Router();
 

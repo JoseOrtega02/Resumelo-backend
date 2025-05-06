@@ -5,6 +5,7 @@ export interface LikesRepo {
   setLike(summaryId: string, userId: string): Promise<string>;
   removeLike(summaryId: string, userId: string): Promise<string>;
   checkLike(summaryId: string, userId: string): Promise<Boolean>;
+  countLikes(summaryId: string): Promise<number>;
 }
 
 export class LikesRepositorySQL implements LikesRepo {
@@ -43,5 +44,15 @@ export class LikesRepositorySQL implements LikesRepo {
     } else {
       return true;
     }
+  }
+  async countLikes(summaryId: string): Promise<number> {
+    const response = await client.execute({
+      sql: "SELECT COUNT(*) as count FROM likes WHERE summaryId = ?",
+      args: [summaryId],
+    });
+    const row = response.rows?.[0];
+    const count = row?.count ?? 0;
+
+    return Number(count);
   }
 }
