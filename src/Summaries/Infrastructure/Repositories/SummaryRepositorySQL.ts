@@ -30,6 +30,7 @@ export class SummaryRepositorySQL implements SummaryRepo {
   async findById(id: string): Promise<SummaryWithAuthor | null> {
     const response = await client.execute({
       sql: `SELECT 
+      summaries.title,
   summaries.id,
   summaries.desc,
   summaries.pdf,

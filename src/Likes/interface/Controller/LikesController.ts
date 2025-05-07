@@ -12,6 +12,7 @@ export class LikesController {
   async setLike(req: Request, res: Response, next: NextFunction) {
     const { summaryId, userId } = req.body;
     try {
+      console.log(req.body);
       const useCase = new SetLikeUseCase(this.repository);
       const data = await useCase.exec(summaryId, userId);
 

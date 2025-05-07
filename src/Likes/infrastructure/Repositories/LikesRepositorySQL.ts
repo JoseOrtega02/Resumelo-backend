@@ -22,6 +22,7 @@ export class LikesRepositorySQL implements LikesRepo {
       throw new AppError("error setting the like", 400);
     }
 
+    console.log(response);
     return "Liked successfully";
   }
   async removeLike(summaryId: string, userId: string): Promise<string> {
