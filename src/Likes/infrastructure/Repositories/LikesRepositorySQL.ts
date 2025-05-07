@@ -40,7 +40,7 @@ export class LikesRepositorySQL implements LikesRepo {
       sql: "SELECT summaryId,userId FROM likes WHERE summaryId = ? AND userId = ? ",
       args: [summaryId, userId],
     });
-    if (!response.rowsAffected) {
+    if (!response.rows.length) {
       return false;
     } else {
       return true;

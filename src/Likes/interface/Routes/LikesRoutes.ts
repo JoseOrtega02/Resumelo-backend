@@ -6,6 +6,7 @@ const controller = new LikesController(repo);
 const likesRouter = Router();
 
 likesRouter.post("/", controller.setLike.bind(controller));
+likesRouter.get("/:summaryId&:userId", controller.checkLike.bind(controller));
 likesRouter.delete("/", controller.removeLike.bind(controller));
 
 export default likesRouter;

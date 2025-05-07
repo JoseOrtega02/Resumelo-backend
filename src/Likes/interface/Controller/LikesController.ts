@@ -3,6 +3,7 @@ import { LikesRepo } from "../../infrastructure/Repositories/LikesRepositorySQL"
 import { SetLikeUseCase } from "../../application/useCases/setLikeUseCase";
 import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 import { RemoveLIke } from "../../application/useCases/removeLikeUseCase";
+import { CheckLikeUseCase } from "../../application/useCases/checkLikeUseCase";
 
 export class LikesController {
   private repository;
@@ -28,6 +29,21 @@ export class LikesController {
       const data = await useCase.exec(summaryId, userId);
 
       res.status(201).json(new ApiResponse("success", data));
+    } catch (error) {
+      next(error);
+    }
+  }
+  async checkLike(req: Request, res: Response, next: NextFunction) {
+    const { summaryId, userId } = req.params;
+    try {
+      const useCase = new CheckLikeUseCase(this.repository);
+      const data = await useCase.exec(summaryId, userId);
+      const response = {
+        status: data,
+      };
+      res
+        .status(200)
+        .json(new ApiResponse("success", "Checking complete", response));
     } catch (error) {
       next(error);
     }
