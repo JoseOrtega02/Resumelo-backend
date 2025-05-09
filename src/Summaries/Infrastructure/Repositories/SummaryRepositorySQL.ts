@@ -64,7 +64,18 @@ WHERE summaries.id = ?`,
 
   async findAll(): Promise<SummaryWithAuthor[]> {
     const response = await client.execute(
-      "SELECT summaries.id,summaries.title,summaries.desc,summaries.pdf,summaries.author,summaries.likes,summaries.liked,users.email,users.name FROM summaries JOIN users ON author = users.id"
+      `SELECT 
+  summaries.id,
+  summaries.title,
+  summaries.desc,
+  summaries.author,
+  users.name AS authorName,
+  COUNT(likes.userId) AS likesCount
+FROM summaries
+JOIN users ON summaries.author = users.id
+LEFT JOIN likes ON summaries.id = likes.summaryId
+GROUP BY summaries.id;
+`
     );
     if (!response || !response.rows) {
       return [];
@@ -72,14 +83,14 @@ WHERE summaries.id = ?`,
 
     return response.rows.map((row: any) => {
       const data = row;
-      const author = { name: data.name, email: data.email };
+      const author = { name: data.authorName };
       return new SummaryWithAuthor(
         data.title,
         data.desc,
-        data.pdf,
+        "",
         data.author,
-        data.likes,
-        data.liked,
+        data.likesCount,
+        false,
         author,
         data.id
       );
@@ -107,5 +118,42 @@ WHERE summaries.id = ?`,
       throw new AppError("error deleting summary", 500);
     }
     return res;
+  }
+  async search(title: string): Promise<Summary[] | []> {
+    const res = await client.execute({
+      sql: `
+       SELECT 
+      summaries.id,
+      summaries.title,
+      summaries.desc,
+      summaries.author,
+      users.name AS authorName,
+      COUNT(likes.userId) AS likesCount
+    FROM summaries
+    JOIN users ON summaries.author = users.id
+    LEFT JOIN likes ON summaries.id = likes.summaryId
+    WHERE summaries.title LIKE ?
+    GROUP BY summaries.id;
+  `,
+      args: [`%${title}%`],
+    });
+
+    if (!res.rows.length) {
+      return [];
+    }
+    return res.rows.map((row: any) => {
+      const data = row;
+      const author = { name: data.authorName };
+      return new SummaryWithAuthor(
+        data.title,
+        data.desc,
+        "",
+        data.author,
+        data.likesCount,
+        false,
+        author,
+        data.id
+      );
+    });
   }
 }

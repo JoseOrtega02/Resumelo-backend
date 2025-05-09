@@ -11,6 +11,8 @@ import { IdSchema } from "../../../Users/Interface/Schemas/IdSchema";
 import { CreateSummarySchema } from "../Schemas/CreateSummarySchema";
 import { UpdateSummarySchema } from "../Schemas/UpdateSummarySchema";
 import { LikesRepo } from "../../../Likes/infrastructure/Repositories/LikesRepositorySQL";
+import { SearchSummaryUseCase } from "../../Aplication/UseCases/SearchSummary";
+import { SearchSummarySchema } from "../Schemas/SearchSummarySchema";
 
 interface ISummaryController {
   getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -18,6 +20,7 @@ interface ISummaryController {
   create(req: Request, res: Response, next: NextFunction): Promise<void>;
   edit(req: Request, res: Response, next: NextFunction): Promise<void>;
   delete(req: Request, res: Response, next: NextFunction): Promise<void>;
+  search(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export class SummaryController implements ISummaryController {
@@ -141,6 +144,21 @@ export class SummaryController implements ISummaryController {
     try {
       const message = await useCase.exec(id);
       res.status(200).json(new ApiResponse("success", message));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async search(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const useCase = new SearchSummaryUseCase(this.repositoryInstance);
+    const { title } = req.params;
+    const result = SearchSummarySchema.safeParse(title);
+    if (!result.success) {
+      res.status(400).json(new ApiResponse("error", result.error.message));
+    }
+    try {
+      const data = await useCase.exec(title);
+      res.status(200).json(new ApiResponse("success", "summaries found", data));
     } catch (error) {
       next(error);
     }

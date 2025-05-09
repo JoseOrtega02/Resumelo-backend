@@ -9,4 +9,5 @@ export interface SummaryRepo {
   findAll(): Promise<SummaryWithAuthor[]>; // Cambiado para devolver siempre un array
   put(summary: Summary, id: string): Promise<Summary | null>; // Se asume que `summary` ya contiene los datos actualizados
   delete(id: string): Promise<void | ResultSet>;
+  search(title: string): Promise<Summary[] | []>;
 }

@@ -24,6 +24,7 @@ const summaryController = new SummaryController(
 const router = Router();
 
 router.get("/", summaryController.getAll.bind(summaryController));
+router.get("/search/:title", summaryController.search.bind(summaryController));
 router.get("/:id", summaryController.getById.bind(summaryController));
 //protected routes
 router.post(

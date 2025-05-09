@@ -2,7 +2,7 @@ import { ISummaryWithAuthor } from "./ISummaryWithAuthor";
 import { Summary } from "./Summary";
 
 export class SummaryWithAuthor extends Summary implements ISummaryWithAuthor {
-  authorData: { name: string; email: string };
+  authorData: { name: string };
 
   constructor(
     title: string,
@@ -11,7 +11,7 @@ export class SummaryWithAuthor extends Summary implements ISummaryWithAuthor {
     author: string,
     likes: number = 0,
     liked: boolean = false,
-    authorData: { name: string; email: string },
+    authorData: { name: string },
     id?: string
   ) {
     super(title, desc, pdf, author, likes, liked, id);
