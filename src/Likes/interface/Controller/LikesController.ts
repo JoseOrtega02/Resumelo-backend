@@ -23,7 +23,7 @@ export class LikesController {
     }
   }
   async removeLike(req: Request, res: Response, next: NextFunction) {
-    const { summaryId, userId } = req.body;
+    const { summaryId, userId } = req.params;
     try {
       const useCase = new RemoveLIke(this.repository);
       const data = await useCase.exec(summaryId, userId);

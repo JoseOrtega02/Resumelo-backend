@@ -30,6 +30,7 @@ export class LikesRepositorySQL implements LikesRepo {
       sql: "DELETE FROM likes WHERE summaryId = ? AND userId = ?",
       args: [summaryId, userId],
     });
+    console.log(response);
     if (!response.rowsAffected) {
       throw new AppError("error deleting the like", 400);
     }
