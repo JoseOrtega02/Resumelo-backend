@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-s3";
 
 export interface DocumentRepository {
-  create(filepath: string, key: string): Promise<string | undefined>;
+  create(buffer: Buffer, key: string): Promise<string | undefined>;
   delete(key: string): Promise<string | undefined>;
 }
 export class CloudflareRepositoryR2 implements DocumentRepository {
@@ -18,13 +18,12 @@ export class CloudflareRepositoryR2 implements DocumentRepository {
     this.cloudflareDomain = cloudflareDomain;
   }
 
-  async create(filepath: string, key: string) {
+  async create(buffer: Buffer, key: string) {
     try {
-      const fileStream = createReadStream(filepath);
       const params = {
         Bucket: this.bucket,
         Key: key,
-        Body: fileStream,
+        Body: buffer,
         ContentType: "application/pdf",
       };
       await s3Client.send(new PutObjectCommand(params));

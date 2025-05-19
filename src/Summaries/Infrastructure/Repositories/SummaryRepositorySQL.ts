@@ -4,6 +4,7 @@ import { SummaryRepo } from "../../Domain/Repositories/SummaryRepo";
 import { client } from "../../../DB/TursoDB";
 import { ResultSet } from "@libsql/client/.";
 import { AppError } from "../../../Shared/Interface/Responses/AppError";
+import { SummaryWithAuthor } from "../../Domain/Entities/SummaryWithAuthor";
 
 export class SummaryRepositorySQL implements SummaryRepo {
   async create(summary: ISummary) {
@@ -26,9 +27,21 @@ export class SummaryRepositorySQL implements SummaryRepo {
     return res;
   }
 
-  async findById(id: string): Promise<Summary | null> {
+  async findById(id: string): Promise<SummaryWithAuthor | null> {
     const response = await client.execute({
-      sql: `SELECT * FROM summaries WHERE id=?`,
+      sql: `SELECT 
+      summaries.title,
+  summaries.id,
+  summaries.desc,
+  summaries.pdf,
+  summaries.author,
+  summaries.likes,
+  summaries.liked,
+  users.email,
+  users.name
+FROM summaries
+JOIN users ON summaries.author = users.id
+WHERE summaries.id = ?`,
       args: [id],
     });
     if (!response.rows.length) {
@@ -36,33 +49,49 @@ export class SummaryRepositorySQL implements SummaryRepo {
     }
 
     const resConverted: any = response.rows[0];
-    return new Summary(
+    const authorData = { name: resConverted.name, email: resConverted.email };
+    return new SummaryWithAuthor(
       resConverted.title,
       resConverted.desc,
       resConverted.pdf,
       resConverted.author,
       resConverted.likes,
       resConverted.liked,
+      authorData,
       resConverted.id
     );
   }
 
-  async findAll(): Promise<Summary[]> {
-    const response = await client.execute("SELECT * FROM summaries");
+  async findAll(): Promise<SummaryWithAuthor[]> {
+    const response = await client.execute(
+      `SELECT 
+  summaries.id,
+  summaries.title,
+  summaries.desc,
+  summaries.author,
+  users.name AS authorName,
+  COUNT(likes.userId) AS likesCount
+FROM summaries
+JOIN users ON summaries.author = users.id
+LEFT JOIN likes ON summaries.id = likes.summaryId
+GROUP BY summaries.id;
+`
+    );
     if (!response || !response.rows) {
       return [];
     }
 
     return response.rows.map((row: any) => {
       const data = row;
-
-      return new Summary(
+      const author = { name: data.authorName };
+      return new SummaryWithAuthor(
         data.title,
         data.desc,
-        data.pdf,
+        "",
         data.author,
-        data.likes,
-        data.liked,
+        data.likesCount,
+        false,
+        author,
         data.id
       );
     });
@@ -89,5 +118,42 @@ export class SummaryRepositorySQL implements SummaryRepo {
       throw new AppError("error deleting summary", 500);
     }
     return res;
+  }
+  async search(title: string): Promise<Summary[] | []> {
+    const res = await client.execute({
+      sql: `
+       SELECT 
+      summaries.id,
+      summaries.title,
+      summaries.desc,
+      summaries.author,
+      users.name AS authorName,
+      COUNT(likes.userId) AS likesCount
+    FROM summaries
+    JOIN users ON summaries.author = users.id
+    LEFT JOIN likes ON summaries.id = likes.summaryId
+    WHERE summaries.title LIKE ?
+    GROUP BY summaries.id;
+  `,
+      args: [`%${title}%`],
+    });
+
+    if (!res.rows.length) {
+      return [];
+    }
+    return res.rows.map((row: any) => {
+      const data = row;
+      const author = { name: data.authorName };
+      return new SummaryWithAuthor(
+        data.title,
+        data.desc,
+        "",
+        data.author,
+        data.likesCount,
+        false,
+        author,
+        data.id
+      );
+    });
   }
 }

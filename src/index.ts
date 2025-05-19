@@ -5,12 +5,15 @@ import { errorHandler } from "./Middlewares/ErrorHandler";
 import loginRouter from "./Users/Interface/Routes/LoginRoutes";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+import likesRouter from "./Likes/interface/Routes/LikesRoutes";
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3001"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 };
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
@@ -21,6 +24,8 @@ const limiter = rateLimit({
 });
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(cookieParser());
+// app.options("*", cors(corsOptions));
 app.use(limiter);
 
 app.get("/", (req: Request, res: Response) => {
@@ -30,6 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/summary", router);
 app.use("/user", userRouter);
 app.use("/login", loginRouter);
+app.use("/like", likesRouter);
 app.use(errorHandler);
 
 let server: ReturnType<typeof app.listen> | undefined = undefined;
