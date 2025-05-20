@@ -17,7 +17,7 @@ export class LikesController {
       const useCase = new SetLikeUseCase(this.repository);
       const data = await useCase.exec(summaryId, userId);
 
-      res.status(201).json(new ApiResponse("success", data));
+      res.status(201).json(new ApiResponse("success",data.message, data));
     } catch (error) {
       next(error);
     }
@@ -28,7 +28,7 @@ export class LikesController {
       const useCase = new RemoveLIke(this.repository);
       const data = await useCase.exec(summaryId, userId);
 
-      res.status(201).json(new ApiResponse("success", data));
+      res.status(201).json(new ApiResponse("success",data.message, data));
     } catch (error) {
       next(error);
     }
@@ -38,12 +38,9 @@ export class LikesController {
     try {
       const useCase = new CheckLikeUseCase(this.repository);
       const data = await useCase.exec(summaryId, userId);
-      const response = {
-        status: data,
-      };
       res
         .status(200)
-        .json(new ApiResponse("success", "Checking complete", response));
+        .json(new ApiResponse("success", "Checking complete", data));
     } catch (error) {
       next(error);
     }
