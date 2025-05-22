@@ -33,11 +33,13 @@ export class LikesController {
       next(error);
     }
   }
+
   async checkLike(req: Request, res: Response, next: NextFunction) {
     const { summaryId, userId } = req.params;
     try {
       const useCase = new CheckLikeUseCase(this.repository);
       const data = await useCase.exec(summaryId, userId);
+      console.log(data)
       res
         .status(200)
         .json(new ApiResponse("success", "Checking complete", data));

@@ -51,7 +51,7 @@ console.log(response)
 
     const result ={
       likes: response.rows[0].totalLikes,
-      likedByUser: response.rows[0].totalLikes ? true:false
+      likedByUser: response.rows[0].likedByUser ? true:false
     }
     return result
   }
