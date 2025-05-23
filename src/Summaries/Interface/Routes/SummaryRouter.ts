@@ -40,4 +40,6 @@ router.delete(
   summaryController.delete.bind(summaryController)
 );
 
+router.get("/author/:authorId",summaryController.getAllByAuthor.bind(summaryController))
+
 export default router;

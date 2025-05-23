@@ -156,4 +156,43 @@ GROUP BY summaries.id;
       );
     });
   }
+
+  async findAllByAuthor(authorId: string): Promise<Summary[] | []> {
+    console.log("LLEGA AL REPO")
+    const res = await client.execute({
+      sql: `
+SELECT 
+  s.id,
+  s.title,
+  s.desc,
+  s.author,
+  u.name AS authorName,
+  COUNT(l.userId) AS likesCount
+FROM summaries s
+JOIN users u ON s.author = u.id
+LEFT JOIN likes l ON s.id = l.summaryId
+WHERE s.author = ?
+GROUP BY s.id, s.title, s.desc, s.author, u.name;
+
+  `,
+      args: [authorId],
+    });
+
+    if (!res.rows.length) {
+      return [];
+    }
+    return res.rows.map((row: any) => {
+      const data = row;
+      return new SummaryWithAuthor(
+        data.title,
+        data.desc,
+        "",
+        data.author,
+        data.likesCount,
+        false,
+        data.authorName,
+        data.id
+      );
+    });
+  }
 }

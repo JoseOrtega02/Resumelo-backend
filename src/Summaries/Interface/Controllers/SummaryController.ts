@@ -13,6 +13,7 @@ import { UpdateSummarySchema } from "../Schemas/UpdateSummarySchema";
 import { LikesRepo } from "../../../Likes/infrastructure/Repositories/LikesRepositorySQL";
 import { SearchSummaryUseCase } from "../../Aplication/UseCases/SearchSummary";
 import { SearchSummarySchema } from "../Schemas/SearchSummarySchema";
+import { FindAllByAuthorUseCase } from "../../Aplication/UseCases/FindAllByAuthorSummaries";
 
 interface ISummaryController {
   getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -21,6 +22,7 @@ interface ISummaryController {
   edit(req: Request, res: Response, next: NextFunction): Promise<void>;
   delete(req: Request, res: Response, next: NextFunction): Promise<void>;
   search(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getAllByAuthor(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export class SummaryController implements ISummaryController {
@@ -163,4 +165,23 @@ export class SummaryController implements ISummaryController {
       next(error);
     }
   }
+
+async getAllByAuthor(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const useCase = new FindAllByAuthorUseCase(this.repositoryInstance)
+    const {authorId} = req.params
+    const result = IdSchema.safeParse(authorId);
+    if (!result.success) {
+      console.log("invalid id")
+      res.status(400).json(new ApiResponse("error", result.error.message));
+    }
+    try {
+
+     const data= await useCase.exec(authorId) 
+console.log(data)
+      res.status(200).json(new ApiResponse("success","summaries of author found",data))
+
+    } catch (error) {
+     next(error) 
+    }
+}
 }
