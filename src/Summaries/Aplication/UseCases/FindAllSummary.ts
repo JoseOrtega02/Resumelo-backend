@@ -6,8 +6,10 @@ export class FindAllSummariesUseCase {
   constructor(SummaryRepository: SummaryRepo) {
     this.SummaryRepository = SummaryRepository;
   }
-  async exec() {
-    const summaries = await this.SummaryRepository.findAll();
+  async exec(page:number) {
+    const limit = 10
+    const offset = (page-1) * limit
+    const summaries = await this.SummaryRepository.findAll(limit,offset,page);
     return summaries;
   }
 }

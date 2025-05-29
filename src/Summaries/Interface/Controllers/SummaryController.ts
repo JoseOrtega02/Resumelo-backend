@@ -14,6 +14,7 @@ import { LikesRepo } from "../../../Likes/infrastructure/Repositories/LikesRepos
 import { SearchSummaryUseCase } from "../../Aplication/UseCases/SearchSummary";
 import { SearchSummarySchema } from "../Schemas/SearchSummarySchema";
 import { FindAllByAuthorUseCase } from "../../Aplication/UseCases/FindAllByAuthorSummaries";
+import { PaginatedResponse } from "../../../Shared/Interface/Responses/PaginatedResponse";
 
 interface ISummaryController {
   getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -40,12 +41,14 @@ export class SummaryController implements ISummaryController {
   }
 
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const {page} = req.query
+    const numberPage = Number(page)
     try {
       const useCase = new FindAllSummariesUseCase(this.repositoryInstance);
-      const summaries = await useCase.exec();
+      const summaries = await useCase.exec(numberPage);
       res
         .status(200)
-        .json(new ApiResponse("success", "Summaries found", summaries));
+        .json(new PaginatedResponse("Summaries found", summaries.data,summaries.pagination));
     } catch (error) {
       next(error);
     }
