@@ -142,12 +142,14 @@ export class SummaryController implements ISummaryController {
       this.repositoryDocumentInstance
     );
     const { id } = req.params;
+    console.log(req.body)
+    const {userId} = req.body.user
     const result = IdSchema.safeParse(id);
     if (!result.success) {
       res.status(400).json(new ApiResponse("error", result.error.message));
     }
     try {
-      const message = await useCase.exec(id);
+      const message = await useCase.exec(id,userId);
       res.status(200).json(new ApiResponse("success", message));
     } catch (error) {
       next(error);
