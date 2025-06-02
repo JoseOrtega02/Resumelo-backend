@@ -8,7 +8,6 @@ import { DeleteSummaryUseCase } from "../../Aplication/UseCases/DeleteSummary";
 import { DocumentRepository } from "../../Infrastructure/Repositories/CloudfareRepositoryR2";
 import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 import { IdSchema } from "../../../Users/Interface/Schemas/IdSchema";
-import { CreateSummarySchema } from "../Schemas/CreateSummarySchema";
 import { UpdateSummarySchema } from "../Schemas/UpdateSummarySchema";
 import { LikesRepo } from "../../../Likes/infrastructure/Repositories/LikesRepositorySQL";
 import { SearchSummaryUseCase } from "../../Aplication/UseCases/SearchSummary";
@@ -70,7 +69,6 @@ export class SummaryController implements ISummaryController {
         this.likesRepository
       );
       const summary = await useCase.exec(id);
-
       res
         .status(200)
         .json(new ApiResponse("success", "Summary found", summary));
@@ -113,7 +111,7 @@ export class SummaryController implements ISummaryController {
     );
     const { title, desc, pdf } = req.body;
     const { id } = req.params;
-
+    const {userId} = req.body.user
     const result = IdSchema.safeParse(id);
     if (!result.success) {
       res.status(400).json(new ApiResponse("error", result.error.message));
@@ -127,7 +125,7 @@ export class SummaryController implements ISummaryController {
       res.status(400).json(new ApiResponse("error", bodyResult.error.message));
     }
     try {
-      const data = await useCase.execute(title, desc, pdf, id);
+      const data = await useCase.execute(title, desc, pdf, id,userId);
       res
         .status(201)
         .json(new ApiResponse("success", "Summary edited successfully", data));

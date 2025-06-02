@@ -1,6 +1,9 @@
 import { ISummary } from "../../Domain/Entities/ISummary";
 import { Summary } from "../../Domain/Entities/Summary";
-import { FindAllResponse, SummaryRepo } from "../../Domain/Repositories/SummaryRepo";
+import {
+  FindAllResponse,
+  SummaryRepo,
+} from "../../Domain/Repositories/SummaryRepo";
 import { client } from "../../../DB/TursoDB";
 import { ResultSet } from "@libsql/client/.";
 import { AppError } from "../../../Shared/Interface/Responses/AppError";
@@ -58,11 +61,15 @@ WHERE summaries.id = ?`,
       resConverted.likes,
       resConverted.liked,
       authorData,
-      resConverted.id
+      resConverted.id,
     );
   }
 
-  async findAll(limit:number,offset:number,page:number): Promise<FindAllResponse> {
+  async findAll(
+    limit: number,
+    offset: number,
+    page: number,
+  ): Promise<FindAllResponse> {
     const result = await client.execute({
       sql: `SELECT 
   summaries.id,
@@ -77,18 +84,19 @@ LEFT JOIN likes ON summaries.id = likes.summaryId
 GROUP BY summaries.id, summaries.title, summaries.desc, summaries.author, users.name
 ORDER BY summaries.id
 LIMIT ? OFFSET ?;`,
-      args:[limit,offset]
-
-    }
-    );
+      args: [limit, offset],
+    });
     if (!result || !result.rows) {
-      throw new AppError("something went wrong finding summaries",500)
+      throw new AppError("something went wrong finding summaries", 500);
     }
-  
-    const totalResponse = await client.execute(`SELECT COUNT(*) AS total FROM summaries;`)
-    if(!totalResponse || !totalResponse.rows) throw new AppError("something went wrong with summaries pages",500)
-    const total = Number(totalResponse.rows[0].total)
-    const totalPages = Math.ceil( total / limit)
+
+    const totalResponse = await client.execute(
+      `SELECT COUNT(*) AS total FROM summaries;`,
+    );
+    if (!totalResponse || !totalResponse.rows)
+      throw new AppError("something went wrong with summaries pages", 500);
+    const total = Number(totalResponse.rows[0].total);
+    const totalPages = Math.ceil(total / limit);
 
     const data = result.rows.map((row: any) => {
       const data = row;
@@ -101,20 +109,20 @@ LIMIT ? OFFSET ?;`,
         data.likesCount,
         false,
         author,
-        data.id
+        data.id,
       );
     });
 
     return {
-      data:data,
-      pagination:{
-        totalPages:totalPages,
-        totalItems:total,
+      data: data,
+      pagination: {
+        totalPages: totalPages,
+        totalItems: total,
         page: page,
         nextPage: page < totalPages ? page + 1 : null,
-        previousPage: page >totalPages ? page-1 : null,
-      }
-    }
+        previousPage: page > 1 ? page - 1 : null,
+      },
+    };
   }
 
   async put(summary: Summary, id: string): Promise<Summary | null> {
@@ -130,6 +138,11 @@ LIMIT ? OFFSET ?;`,
   }
 
   async delete(id: string): Promise<void | ResultSet> {
+    await client.execute({
+      sql: `DELETE FROM likes WHERE summaryId = ?`,
+      args: [id],
+    });
+
     const res = await client.execute({
       sql: `DELETE FROM summaries WHERE id=?`,
       args: [id],
@@ -139,6 +152,7 @@ LIMIT ? OFFSET ?;`,
     }
     return res;
   }
+
   async search(title: string): Promise<Summary[] | []> {
     const res = await client.execute({
       sql: `
@@ -172,13 +186,13 @@ LIMIT ? OFFSET ?;`,
         data.likesCount,
         false,
         author,
-        data.id
+        data.id,
       );
     });
   }
 
   async findAllByAuthor(authorId: string): Promise<Summary[] | []> {
-    console.log("LLEGA AL REPO")
+    console.log("LLEGA AL REPO");
     const res = await client.execute({
       sql: `
 SELECT 
@@ -211,7 +225,7 @@ GROUP BY s.id, s.title, s.desc, s.author, u.name;
         data.likesCount,
         false,
         data.authorName,
-        data.id
+        data.id,
       );
     });
   }

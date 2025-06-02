@@ -25,12 +25,18 @@ export class PutSummaryUseCase {
     title: string,
     desc: string,
     pdf: Express.Multer.File | undefined,
-    id: string
+    id: string,
+    userId:string
   ): Promise<Summary | null> {
     this.idValidator.validate(id);
     this.dataValidator.validate({ title: title, desc: desc, pdf: pdf });
 
     const summary = await this.SummaryRepository.findById(id);
+
+    if (summary?.getAuthor() != userId){
+        throw new AppError("Only the owner can edit",403)
+    }
+
     if (!pdf) {
       throw new AppError("Document not provided", 400);
     }
