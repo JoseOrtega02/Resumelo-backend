@@ -10,4 +10,5 @@ export interface ISummary {
   setDesc(desc: string): void;
   setPdf(pdf: string): void;
   setLike(liked: boolean): void;
+  setLikesCount(likes: number): void;
 }

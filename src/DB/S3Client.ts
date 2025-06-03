@@ -9,7 +9,7 @@ const s3Client = new S3Client({
     endpoint: CLOUDFLARE_URL_R2 || "",
     credentials: {
         accessKeyId: CLOUDFLARE_ACCESS_KEY || "",
-        secretAccessKey:hashedSecretKey,
+        secretAccessKey: CLOUDFLARE_SECRET_ACCESS_KEY || "",
     }
 })
 

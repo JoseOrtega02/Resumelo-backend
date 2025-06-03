@@ -24,19 +24,31 @@ export class PutSummaryUseCase {
   async execute(
     title: string,
     desc: string,
-    pdf: string,
-    id: string
+    pdf: Express.Multer.File | undefined,
+    id: string,
+    userId:string
   ): Promise<Summary | null> {
     this.idValidator.validate(id);
     this.dataValidator.validate({ title: title, desc: desc, pdf: pdf });
 
     const summary = await this.SummaryRepository.findById(id);
 
+    if (summary?.getAuthor() != userId){
+        throw new AppError("Only the owner can edit",403)
+    }
+
+    if (!pdf) {
+      throw new AppError("Document not provided", 400);
+    }
     let newSummary = null;
     if (summary) {
       summary.setTitle(title);
       summary.setDesc(desc);
-      const url = await this.DocumentRepository.create(pdf, summary.getId());
+
+      const url = await this.DocumentRepository.create(
+        pdf.buffer,
+        summary.getId()
+      );
 
       if (url) {
         summary.setPdf(url);

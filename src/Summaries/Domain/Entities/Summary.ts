@@ -69,7 +69,9 @@ export class Summary implements ISummary {
       this.liked = liked;
     }
   }
-
+  setLikesCount(likes: number): void {
+    this.likes = likes;
+  }
   equals(other: Summary): boolean {
     return (
       this.title === other.title &&
