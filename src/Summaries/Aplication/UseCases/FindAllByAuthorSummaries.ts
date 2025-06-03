@@ -6,7 +6,6 @@ export class FindAllByAuthorUseCase {
     this.repository = repo;
   }
   async exec(authorId: string) {
-    console.log(authorId)
     return await this.repository.findAllByAuthor(authorId);
   }
 }

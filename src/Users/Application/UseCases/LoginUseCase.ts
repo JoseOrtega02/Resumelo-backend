@@ -20,7 +20,6 @@ export class LoginUseCase {
     }
 
     if (!JWT_SECRET) {
-      console.log(JWT_SECRET)
       throw new AppError("Internal server error", 500);
     }
 

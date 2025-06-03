@@ -140,7 +140,6 @@ export class SummaryController implements ISummaryController {
       this.repositoryDocumentInstance
     );
     const { id } = req.params;
-    console.log(req.body)
     const {userId} = req.body.user
     const result = IdSchema.safeParse(id);
     if (!result.success) {
@@ -174,13 +173,11 @@ async getAllByAuthor(req: Request, res: Response, next: NextFunction): Promise<v
     const {authorId} = req.params
     const result = IdSchema.safeParse(authorId);
     if (!result.success) {
-      console.log("invalid id")
       res.status(400).json(new ApiResponse("error", result.error.message));
     }
     try {
 
      const data= await useCase.exec(authorId) 
-console.log(data)
       res.status(200).json(new ApiResponse("success","summaries of author found",data))
 
     } catch (error) {

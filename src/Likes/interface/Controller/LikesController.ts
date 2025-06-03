@@ -39,7 +39,6 @@ export class LikesController {
     try {
       const useCase = new CheckLikeUseCase(this.repository);
       const data = await useCase.exec(summaryId, userId);
-      console.log(data)
       res
         .status(200)
         .json(new ApiResponse("success", "Checking complete", data));

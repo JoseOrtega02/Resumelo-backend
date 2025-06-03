@@ -13,5 +13,4 @@ const s3Client = new S3Client({
     }
 })
 
-console.log(CLOUDFLARE_ACCESS_KEY, CLOUDFLARE_SECRET_ACCESS_KEY)
 export default s3Client
