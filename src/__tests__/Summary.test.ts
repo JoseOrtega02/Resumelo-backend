@@ -24,7 +24,7 @@ afterAll(async () => {
     .delete(`/user/${userId}`)
     .set("Authorization", `Bearer ${token}`)
     .expect(200);
-  server.close(); // Cierra el servidor después de todas las pruebas
+  server?.close(); // Cierra el servidor después de todas las pruebas
 });
 
 describe("Integration test for Summary API", () => {
