@@ -1,4 +1,5 @@
 import { PutSummaryUseCase } from "../../UseCases/PutSummary";
+import { crearMockMulterFile } from "./CreateSummaryUseCase.test";
 import { FakeDocumentRepository } from "./FakeDocumentRepo";
 import { FakeSummaryRepo } from "./FakeRepo";
 
@@ -7,11 +8,13 @@ test("Put Summary use case-Unit test", async () => {
   const documentFakeRepo = new FakeDocumentRepository();
   const useCase = new PutSummaryUseCase(fakeRepo, documentFakeRepo);
 
+const file = await crearMockMulterFile("@/__test__/minimal-documet.pdf")
   const res = await useCase.execute(
     "new Summary",
     "new summary edited xd",
-    "edited.pdf",
-    "68234bb8-364b-4cfa-bc9a-3791e0b7b6dd"
+    file,
+    "68234bb8-364b-4cfa-bc9a-3791e0b7b6dd",
+    "userId"
   );
 
   expect(res).toEqual({

@@ -1,10 +1,12 @@
 import { Summary } from "../../../Domain/Entities/Summary";
 import { FindByIdUseCase } from "../../UseCases/FindByIdSummary";
+import { FakeLikeRepository } from "./FakeLIkesRepo";
 import { FakeSummaryRepo } from "./FakeRepo";
 
 test("Find One Summary by id-Unit Test", async () => {
   const fakeRepo = new FakeSummaryRepo();
-  const useCase = new FindByIdUseCase(fakeRepo);
+  const likeFakeRepo = new FakeLikeRepository()
+  const useCase = new FindByIdUseCase(fakeRepo,likeFakeRepo);
   const id = "68234bb8-364b-4cfa-bc9a-3791e0b7b6dd";
   const res = await useCase.exec(id);
 

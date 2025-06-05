@@ -10,9 +10,9 @@ test("Find All Summaries Use Case-Unit Test",async ()=>{
 
     const useCase = new FindAllSummariesUseCase(fakeRepo)
 
-    const res = await useCase.exec()
+    const res = await useCase.exec(1)
 
     expect(res).toBeInstanceOf(Array)
-    expect(res[0]).toBeInstanceOf(Summary);
+    expect(res.data[0]).toBeInstanceOf(Summary);
 
 })
