@@ -25,7 +25,7 @@ const limiter = rateLimit({
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
-// app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(limiter);
 
 app.get("/", (req: Request, res: Response) => {
