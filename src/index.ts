@@ -10,7 +10,7 @@ import likesRouter from "./Likes/interface/Routes/LikesRoutes";
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 const corsOptions = {
-  origin: ["http://localhost:3001"],
+  origin: ["http://localhost:3001","https://resumelo.netlify.app"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
