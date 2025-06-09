@@ -111,6 +111,7 @@ export class SummaryController implements ISummaryController {
     const { title, desc } = req.body;
     const pdf = req.file;
     const { id } = req.params;
+    console.log(pdf)
     const userId = res.locals.userId
     try {
     if(userId == undefined){

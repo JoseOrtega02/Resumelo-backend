@@ -37,7 +37,7 @@ export class LoginController {
     }
   }
   async checkUser(req: Request, res: Response, next: NextFunction) {
-    const id = req.body.user.userId;
+    const id = res.locals.userId;
     try {
       const useCase = new CheckUserUseCase(this.repostitoryInstance);
       const data = await useCase.exec(id);
