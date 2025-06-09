@@ -26,9 +26,10 @@ export class PutSummaryUseCase {
     desc: string,
     pdf: Express.Multer.File | undefined,
     id: string,
-    userId:string
+    userId:string | undefined
   ): Promise<Summary | null> {
     this.idValidator.validate(id);
+    this.idValidator.validate(userId);
     this.dataValidator.validate({ title: title, desc: desc, pdf: pdf });
 
     const summary = await this.SummaryRepository.findById(id);

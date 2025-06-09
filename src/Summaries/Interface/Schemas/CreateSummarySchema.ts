@@ -2,7 +2,7 @@ import { z } from "zod";
 export const titleRegex = /^[\p{L}\p{N}\p{P}\p{Zs}]{1,100}$/u;
 export const descRegex = /^[\p{L}\p{N}\p{P}\p{Zs}\r\n]{1,500}$/u;
 
-const pdfSchema = z.object({
+export const pdfSchema = z.object({
   fieldname: z.literal("pdf"),
   originalname: z.string(),
   encoding: z.string(),
@@ -17,7 +17,8 @@ export const CreateSummarySchema = z.object({
     .regex(titleRegex),
   desc: z
     .string()
-    .max(30, { message: "description cant be that long" })
+  .min(1,{message:"desc cant be empty"})
+    .max(100, { message: "description cant be that long" })
     .regex(descRegex),
   pdf: pdfSchema,
   author: z.string().uuid({ message: "invalid id" }),

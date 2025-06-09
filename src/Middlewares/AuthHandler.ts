@@ -15,8 +15,8 @@ export const AuthHandler = (
     const decodedToken = jwt.verify(token, JWT_SECRET || "") as {
       userId: string;
     };
-
-    req.body.user = decodedToken;
+    console.log(decodedToken)
+    res.locals.userId = decodedToken.userId;
     next();
   } catch (error) {
     res.status(401).json({ success: false, message: "Invalid Token" });

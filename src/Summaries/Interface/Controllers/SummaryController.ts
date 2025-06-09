@@ -8,7 +8,6 @@ import { DeleteSummaryUseCase } from "../../Aplication/UseCases/DeleteSummary";
 import { DocumentRepository } from "../../Infrastructure/Repositories/CloudfareRepositoryR2";
 import ApiResponse from "../../../Shared/Interface/Responses/ApiResponse";
 import { IdSchema } from "../../../Users/Interface/Schemas/IdSchema";
-import { UpdateSummarySchema } from "../Schemas/UpdateSummarySchema";
 import { LikesRepo } from "../../../Likes/infrastructure/Repositories/LikesRepositorySQL";
 import { SearchSummaryUseCase } from "../../Aplication/UseCases/SearchSummary";
 import { SearchSummarySchema } from "../Schemas/SearchSummarySchema";
@@ -109,22 +108,14 @@ export class SummaryController implements ISummaryController {
       this.repositoryInstance,
       this.repositoryDocumentInstance
     );
-    const { title, desc, pdf } = req.body;
+    const { title, desc } = req.body;
+    const pdf = req.file;
     const { id } = req.params;
-    const {userId} = req.body.user
-    const result = IdSchema.safeParse(id);
-    if (!result.success) {
-      res.status(400).json(new ApiResponse("error", result.error.message));
-    }
-    const bodyResult = UpdateSummarySchema.safeParse({
-      title: title,
-      desc: desc,
-      pdf: pdf,
-    });
-    if (!bodyResult.success) {
-      res.status(400).json(new ApiResponse("error", bodyResult.error.message));
-    }
+    const userId = res.locals.userId
     try {
+    if(userId == undefined){
+      res.status(403).json(new ApiResponse("error","dont have access"))
+    }
       const data = await useCase.execute(title, desc, pdf, id,userId);
       res
         .status(201)
@@ -140,7 +131,7 @@ export class SummaryController implements ISummaryController {
       this.repositoryDocumentInstance
     );
     const { id } = req.params;
-    const {userId} = req.body.user
+    const userId = res.locals.userId
     const result = IdSchema.safeParse(id);
     if (!result.success) {
       res.status(400).json(new ApiResponse("error", result.error.message));

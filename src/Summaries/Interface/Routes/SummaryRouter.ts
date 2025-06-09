@@ -14,12 +14,12 @@ const repositoryInstance = new SummaryRepositorySQL();
 const likesRepository = new LikesRepositorySQL();
 const documentRepositoryInstance = new CloudflareRepositoryR2(
   "resumelo-test",
-  CLOUDFLARE_URL_R2 || ""
+  CLOUDFLARE_URL_R2 || "",
 );
 const summaryController = new SummaryController(
   repositoryInstance,
   documentRepositoryInstance,
-  likesRepository
+  likesRepository,
 );
 const router = Router();
 
@@ -31,15 +31,23 @@ router.post(
   "/",
   AuthHandler,
   upload.single("pdf"),
-  summaryController.create.bind(summaryController)
+  summaryController.create.bind(summaryController),
 );
-router.put("/:id", AuthHandler, summaryController.edit.bind(summaryController));
+router.put(
+  "/:id",
+  AuthHandler,
+  upload.single("pdf"),
+  summaryController.edit.bind(summaryController),
+);
 router.delete(
   "/:id",
   AuthHandler,
-  summaryController.delete.bind(summaryController)
+  summaryController.delete.bind(summaryController),
 );
 
-router.get("/author/:authorId",summaryController.getAllByAuthor.bind(summaryController))
+router.get(
+  "/author/:authorId",
+  summaryController.getAllByAuthor.bind(summaryController),
+);
 
 export default router;
