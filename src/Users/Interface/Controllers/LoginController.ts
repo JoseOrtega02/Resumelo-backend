@@ -19,6 +19,8 @@ export class LoginController {
         .status(200)
         .cookie("access_token", data, {
           httpOnly: true,
+          secure: true, // ⚠️ IMPORTANTE: Solo se envía en HTTPS
+          sameSite: "none",
           // secure: process.env.NODE_ENV === "production",
         })
         .json(new ApiResponse("success", "Log in successfully"));
