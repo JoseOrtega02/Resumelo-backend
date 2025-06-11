@@ -15,6 +15,8 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+
+app.set('trust proxy', true);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // Máximo de 100 peticiones
